@@ -39,6 +39,16 @@ app.get('/v1/locadora/filmes', cors(), async (request, response) =>{
     response.json(filme)
 })
 
+app.get('/v1/locadora/filme/:id', cors(), async (request, response) =>{
+    
+    let filmeId = request.params.id
+
+    let filme = await controllerFilme.buscarFilmePorId(filmeId)
+
+    response.status(filme.status_code)
+    response.json(filme)
+
+})
 
 app.listen(PORT, function(){
     console.log('conectado')

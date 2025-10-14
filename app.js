@@ -15,6 +15,10 @@ const express = require('express')
 const cors = require('cors')
 const bodyParser = require('body-parser')
 
+
+//Cria um objeto especialista no formato JSON para receber os dados do body (POST E PUT)
+const bodyParserJSON = bodyParser.json()
+
 const PORT =  process.PORT || 3030
 
 //Instancia na classe do express
@@ -50,6 +54,18 @@ app.get('/v1/locadora/filme/:id', cors(), async (request, response) =>{
 
 })
 
+app.post('/v1/locadora/filme', cors(), bodyParserJSON, async (request, response) =>{
+    //Recebe o objeto JSON pelo body da requisição
+    let dadosBody = request.body
+
+    let contentType = request.headers['content-type']
+
+    let filme = await controllerFilme.inserirFilme(dadosBody, contentType)
+
+    response.status(filme.status_code)
+    response.json(filme)
+
+})
 app.listen(PORT, function(){
     console.log('conectado')
 })

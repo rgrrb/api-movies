@@ -66,6 +66,29 @@ app.post('/v1/locadora/filme', cors(), bodyParserJSON, async (request, response)
     response.json(filme)
 
 })
+
+app.put('/v1/locadora/filme/:id', cors(), bodyParserJSON, async (request, response) =>{
+    let filmeID = request.params.id
+
+    let filmeBody = request.body
+
+    let contentType = request.headers['content-type']
+
+    let filme = await controllerFilme.atualizarFilme(filmeBody, filmeID, contentType)
+
+    response.status(filme.status_code)
+    response.json(filme)
+})
+
+app.delete('/v1/locadora/filme/:id', cors(), bodyParserJSON, async (request, response) =>{
+    let filmeID = request.params.id
+
+    let filme = await controllerFilme.excluirFilmeId(filmeID)
+
+    response.status(filme.status_code)
+    response.json(filme)
+})
+
 app.listen(PORT, function(){
     console.log('conectado')
 })

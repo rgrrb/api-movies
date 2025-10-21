@@ -99,12 +99,21 @@ const inserirFilme = async (filme, contentType) => {
                 let result = await filmeDAO.setInsertFilms(filme)
 
                 if (result) {
-                    MESSAGE.HEADER.status = MESSAGE.SUCESS_CREATED_ITEM.status
-                    MESSAGE.HEADER.status_code = MESSAGE.SUCESS_CREATED_ITEM.status_code
-                    MESSAGE.HEADER.message = MESSAGE.SUCESS_CREATED_ITEM.message
 
-                    return MESSAGE.HEADER
+                    //Chama a função para receber o ID gerado no BD
+                    let lastIdFilme = await filmeDAO.getSelectLastIdFilm()
 
+                    if (lastIdFilme) {
+                        filme.id = lastIdFilme
+                        MESSAGE.HEADER.status = MESSAGE.SUCESS_CREATED_ITEM.status
+                        MESSAGE.HEADER.status_code = MESSAGE.SUCESS_CREATED_ITEM.status_code
+                        MESSAGE.HEADER.message = MESSAGE.SUCESS_CREATED_ITEM.message
+                        MESSAGE.HEADER.response = filme
+
+                        return MESSAGE.HEADER
+                    } else {
+                        return MESSAGE.ERROR_INTERNAL_SERVER_MODEL // 500
+                    }
                 } else {
                     return MESSAGE.ERROR_INTERNAL_SERVER_MODEL
                 }
@@ -193,8 +202,6 @@ const excluirFilmeId = async (id) => {
         return MESSAGE.ERROR_INTERNAL_SERVER_CONTROLLER // 500
     }
 }
-
-
 //Validação dos dados de cadastro do filme
 const validarDadosFilme = async (filme) => {
 

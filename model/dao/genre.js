@@ -14,13 +14,13 @@ const { PrismaClient } = require('../../generated/prisma')
 //Cria um objeto do prisma client para manipular os scripts SQL
 const prisma = new PrismaClient()
 
-//Retorna todos os filmes do banco de dados
+//Retorna todos os generos do banco de dados
 const getSelectAllGenre = async () => {
     try {
 
         //Script SQL
         let sql = `select * from tbl_genero order by genero_id desc;`
-        
+
         //Executa no Banco de Dados o script SQL
         let result = await prisma.$queryRawUnsafe(sql)
         console.log(result)
@@ -33,7 +33,7 @@ const getSelectAllGenre = async () => {
         return false
     }
 }
-console.log(getSelectAllGenre())
+
 //Retorna um genero filtrando pelo ID do banco de dados
 const getSelectByIdGenre = async (id) => {
 
@@ -63,7 +63,7 @@ const getSelectLastIdGenre = async () => {
 
         //Executa no Banco de Dados o script SQL
         let result = await prisma.$queryRawUnsafe(sql)
-    
+
         if (Array.isArray(result))
             return Number(result[0].filme_id)
         else
@@ -80,7 +80,7 @@ const setInsertGenre = async (genre) => {
     try {
         let sql = `INSERT INTO tbl_genero (nome)
                    VALUES (
-                    '${filme.nome}'
+                    '${genre.nome}'
                    );`
 
         let result = await prisma.$executeRawUnsafe(sql)
@@ -99,8 +99,8 @@ const setUpdateGenre = async (genre) => {
 
     try {
         let sql = `UPDATE tbl_genero SET 
-                        nome              = '${filme.nome}',
-                    WHERE genero_id = ${filme.id}`
+                        nome              = '${genre.nome}',
+                    WHERE genero_id = ${genre.id}`
 
         let result = await prisma.$executeRawUnsafe(sql)
 

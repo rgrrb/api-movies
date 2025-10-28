@@ -1,0 +1,153 @@
+/********************************************************
+ * 
+ * Objetivo: Arquivo responsável pela realização do CRUD
+ *           No Banco de Dados MySQL
+ * 
+ * Data: 28/10/2025
+ * Autor: Roger Ribeiro de Oliveira
+ * Versão: 1.0
+ * 
+ *******************************************************/
+
+const { PrismaClient } = require('../../generated/prisma')
+
+//Cria um objeto do prisma client para manipular os scripts SQL
+const prisma = new PrismaClient()
+
+//Retorna todos os personagens do banco de dados
+const getSelectAllCharacters = async () => {
+    try {
+
+        //Script SQL
+        let sql = `select * from tbl_faixa_etaria order by faixa_etaria_id desc;`
+
+        //Executa no Banco de Dados o script SQL
+        let result = await prisma.$queryRawUnsafe(sql)
+
+        if (Array.isArray(result))
+            return result
+        else
+            return false
+    } catch (error) {
+        console.log(error)
+        return false
+    }
+}
+
+//Retorna um personagem filtrando pelo ID do banco de dados
+const getSelectByIdCharacter = async (id) => {
+
+    try {
+
+        //Script SQL
+        let sql = `select * from tbl_faixa_etaria where faixa_etaria_id=${id};`
+
+        //Executa no Banco de Dados o script SQL
+        let result = await prisma.$queryRawUnsafe(sql)
+
+        if (Array.isArray(result))
+            return result
+        else
+            return false
+    } catch (error) {
+        console.log(error)
+        return false
+    }
+}
+
+const getSelectLastIdCharacter = async () => {
+    try {
+
+        //Script SQL
+        let sql = `select faixa_etaria_id from tbl_faixa_etaria order by faixa_etaria_id desc limit 1`
+
+        //Executa no Banco de Dados o script SQL
+        let result = await prisma.$queryRawUnsafe(sql)
+
+        if (Array.isArray(result))
+            return Number(result[0].filme_id)
+        else
+            return false
+    } catch (error) {
+        console.log(error)
+        return false
+    }
+}
+
+//Insere um personagem no banco de dados
+const setInsertCharacter = async (ageGroup) => {
+
+    try {
+        let sql = `INSERT INTO tbl_faixa_etaria (nome, classificacao_indicativa, caracteristicas)
+                   VALUES (
+                    '${ageGroup.nome}',
+                    '${ageGroup.classificacao_indicativa}',
+                    '${ageGroup.caracteristicas}'
+                   );`
+
+        let result = await prisma.$executeRawUnsafe(sql)
+        console.log(sql)
+        console.log(result)
+        if (result) {
+            return true
+        }
+    } catch (error) {
+        return false
+    }
+
+}
+
+//Atualiza um personagem existente no banco de dados filtrando pelo ID
+const setUpdateCharacter  = async (character) => {
+
+    try {
+        let sql = `UPDATE tbl_personagem SET 
+                        nome                = '${character.nome}',
+                        data_nascimento     = '${character.data_nascimento}',
+                        altura              = '${character.altura}',
+                        peso                = '${character.peso}',
+                        descricao           = '${character.descricao}',
+                        personalidade       = '${character.personalidade}',
+                        habilidades         = '${character.habilidades}'
+                    WHERE personagem_id = ${character.id}`
+
+        let result = await prisma.$executeRawUnsafe(sql)
+
+        if (result) {
+            return true
+        }
+    } catch (error) {
+        return false
+    }
+
+}
+
+//Apaga um personagem existente no banco de dados filtrando pelo ID
+const setDeleteCharacter  = async (id) => {
+
+    try {
+
+        //Script SQL
+        let sql = `delete from tbl_personagem where personagem_id=${id};`
+
+        //Executa no Banco de Dados o script SQL
+        let result = await prisma.$queryRawUnsafe(sql)
+
+        if (result)
+            return true
+        else
+            return false
+    } catch (error) {
+        console.log(error)
+        return false
+    }
+}
+
+module.exports = {
+    getSelectAllCharacters,
+    getSelectByIdCharacter,
+    getSelectLastIdCharacter,
+    setInsertCharacter,
+    setUpdateCharacter,
+    setDeleteCharacter
+}

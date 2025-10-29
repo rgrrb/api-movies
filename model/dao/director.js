@@ -19,7 +19,7 @@ const getSelectAllDirectors = async () => {
     try {
 
         //Script SQL
-        let sql = `select * from tbl_faixa_etaria order by faixa_etaria_id desc;`
+        let sql = `select * from tbl_diretor order by diretor_id desc;`
 
         //Executa no Banco de Dados o script SQL
         let result = await prisma.$queryRawUnsafe(sql)
@@ -40,7 +40,7 @@ const getSelectByIdDirector  = async (id) => {
     try {
 
         //Script SQL
-        let sql = `select * from tbl_faixa_etaria where faixa_etaria_id=${id};`
+        let sql = `select * from tbl_diretor where diretor_id=${id};`
 
         //Executa no Banco de Dados o script SQL
         let result = await prisma.$queryRawUnsafe(sql)
@@ -59,7 +59,7 @@ const getSelectLastIdDirector  = async () => {
     try {
 
         //Script SQL
-        let sql = `select faixa_etaria_id from tbl_faixa_etaria order by faixa_etaria_id desc limit 1`
+        let sql = `select diretor_id from tbl_diretor order by diretor_id desc limit 1`
 
         //Executa no Banco de Dados o script SQL
         let result = await prisma.$queryRawUnsafe(sql)
@@ -127,7 +127,7 @@ const setDeleteDirector  = async (id) => {
     try {
 
         //Script SQL
-        let sql = `delete from tbl_faixa_etaria where faixa_etaria_id=${id};`
+        let sql = `delete from tbl_diretor where diretor_id=${id};`
 
         //Executa no Banco de Dados o script SQL
         let result = await prisma.$queryRawUnsafe(sql)

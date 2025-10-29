@@ -13,7 +13,7 @@ const actorDAO = require('../../model/dao/actor.js')
 const MESSAGE_DEFAULT = require('../module/config_messages.js')
 
 //Retorna uma lista de atores
-const listarAtores = async () => {
+const getAllActors = async () => {
 
     let MESSAGE = JSON.parse(JSON.stringify(MESSAGE_DEFAULT))
     //Chama a função do DAO para retornar a lista de atores   
@@ -44,7 +44,7 @@ const listarAtores = async () => {
     }
 }
 //Retorna um ator filtrando pelo ID
-const buscarAtorPorId = async (id) => {
+const searchActorById = async (id) => {
 
     let MESSAGE = JSON.parse(JSON.stringify(MESSAGE_DEFAULT))
 
@@ -79,7 +79,7 @@ const buscarAtorPorId = async (id) => {
     }
 }
 //Insere um novo ator
-const inserirAtor = async (ator, contentType) => {
+const insertActor = async (ator, contentType) => {
 
 
     let MESSAGE = JSON.parse(JSON.stringify(MESSAGE_DEFAULT))
@@ -126,7 +126,7 @@ const inserirAtor = async (ator, contentType) => {
 
 }
 //Atualiza um ator filtrando pelo ID
-const atualizarAtor = async (ator, id, contentType) => {
+const updateActor = async (ator, id, contentType) => {
 
     let MESSAGE = JSON.parse(JSON.stringify(MESSAGE_DEFAULT))
 
@@ -173,7 +173,7 @@ const atualizarAtor = async (ator, id, contentType) => {
 
 }
 //Apaga um ator filtrando pelo ID
-const excluirAtorPorId = async (id) => {
+const deleteActorById = async (id) => {
 
     let MESSAGE = JSON.parse(JSON.stringify(MESSAGE_DEFAULT))
 
@@ -200,7 +200,7 @@ const excluirAtorPorId = async (id) => {
     }
 }
 //Validação dos dados de cadastro do ator
-const validarDadosAtor = async (ator) => {
+const validateActorData = async (ator) => {
 
     let MESSAGE = JSON.parse(JSON.stringify(MESSAGE_DEFAULT))
 
@@ -225,9 +225,9 @@ const validarDadosAtor = async (ator) => {
     }
 }
 module.exports = {
-    listarAtores,
-    buscarAtorPorId,
-    inserirAtor,
-    atualizarAtor,
-    excluirAtorPorId
+    getAllActors,
+    searchActorById,
+    insertActor,
+    updateActor,
+    deleteActorById
 }

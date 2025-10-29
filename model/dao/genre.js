@@ -63,9 +63,9 @@ const getSelectLastIdGenre = async () => {
 
         //Executa no Banco de Dados o script SQL
         let result = await prisma.$queryRawUnsafe(sql)
-
+        console.log(result)
         if (Array.isArray(result))
-            return Number(result[0].filme_id)
+            return Number(result[0].genero_id)
         else
             return false
     } catch (error) {
@@ -99,7 +99,7 @@ const setUpdateGenre = async (genre) => {
 
     try {
         let sql = `UPDATE tbl_genero SET 
-                        nome              = '${genre.nome}',
+                        nome              = '${genre.nome}'
                     WHERE genero_id = ${genre.id}`
 
         let result = await prisma.$executeRawUnsafe(sql)

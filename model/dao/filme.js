@@ -82,7 +82,7 @@ const getSelectAllFilms = async () => {
         return false
     }
 }
-console.log(getSelectAllFilms())
+
 //Retorna um filme filtrando pelo ID do banco de dados
 const getSelectByIdFilms = async (id) => {
 

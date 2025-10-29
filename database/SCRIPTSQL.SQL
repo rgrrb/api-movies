@@ -131,22 +131,18 @@ insert into tbl_personagem
  'Ex-policial que busca justiça após um crime misterioso.', 
  'Corajoso, determinado e leal.', 
  'Combate corpo a corpo e investigação.'),
-
 ('Laura Pires', '2001-06-09', 1.65, 55.20, 
  'Jovem hacker que usa suas habilidades para expor corrupção.', 
  'Inteligente, sarcástica e independente.', 
  'Programação e infiltração digital.'),
-
 ('Pedro Ramos', '1995-11-30', 1.75, 70.00, 
  'Explorador em busca de artefatos antigos.', 
  'Aventureiro, curioso e otimista.', 
  'Escalada, arqueologia e sobrevivência.'),
-
 ('Sofia Martins', '2000-04-25', 1.68, 58.30, 
  'Médica que enfrenta dilemas éticos durante uma pandemia.', 
  'Empática, racional e resiliente.', 
  'Medicina e liderança sob pressão.'),
-
 ('Rafael Torres', '1992-09-07', 1.82, 82.10, 
  'Ex-soldado recrutado para uma missão de resgate internacional.', 
  'Disciplinado, reservado e estrategista.', 

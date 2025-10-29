@@ -13,15 +13,15 @@ const studioDAO = require('../../model/dao/studio.js')
 const MESSAGE_DEFAULT = require('../module/config_messages.js')
 
 //Retorna uma lista de estudios
-const listarEstudios = async () => {
+const getAllStudios = async () => {
 
     let MESSAGE = JSON.parse(JSON.stringify(MESSAGE_DEFAULT))
-    //Chama a função do DAO para retornar a lista de estudios   
+     
     //Realizando uma cópia do objeto message_default, permitindo que as alterações desta função
     //não interfiram em outras funções
 
     try {
-
+        //Chama a função do DAO para retornar a lista de estudios  
         let result = await studioDAO.getSelectAllStudios()
         if (result) {
             if (result.length > 0) {
@@ -44,7 +44,7 @@ const listarEstudios = async () => {
     }
 }
 //Retorna um estudio filtrando pelo ID
-const buscarEstudioPorId = async (id) => {
+const searchStudioById = async (id) => {
 
     let MESSAGE = JSON.parse(JSON.stringify(MESSAGE_DEFAULT))
 
@@ -59,7 +59,7 @@ const buscarEstudioPorId = async (id) => {
 
                     MESSAGE.HEADER.status = MESSAGE.SUCESS_REQUEST.status
                     MESSAGE.HEADER.status_code = MESSAGE.SUCESS_REQUEST.status_code
-                    MESSAGE.HEADER.response.film = result
+                    MESSAGE.HEADER.response.studio = result
 
                     return MESSAGE.HEADER //200
 
@@ -79,7 +79,7 @@ const buscarEstudioPorId = async (id) => {
     }
 }
 //Insere um novo estudio
-const inserirEstudio = async (estudio, contentType) => {
+const insertStudio = async (estudio, contentType) => {
 
 
     let MESSAGE = JSON.parse(JSON.stringify(MESSAGE_DEFAULT))
@@ -88,7 +88,7 @@ const inserirEstudio = async (estudio, contentType) => {
 
         if (String(contentType).toUpperCase() == 'APPLICATION/JSON') {
 
-            let validarDados = await validarDadosEstudio(estudio)
+            let validarDados = await validateStudioData(estudio)
 
             if (!validarDados) {
 
@@ -126,7 +126,7 @@ const inserirEstudio = async (estudio, contentType) => {
 
 }
 //Atualiza um estudio filtrando pelo ID
-const atualizarEstudio = async (estudio, id, contentType) => {
+const updateStudio = async (estudio, id, contentType) => {
 
     let MESSAGE = JSON.parse(JSON.stringify(MESSAGE_DEFAULT))
 
@@ -173,7 +173,7 @@ const atualizarEstudio = async (estudio, id, contentType) => {
 
 }
 //Apaga um estudio filtrando pelo ID
-const excluirEstudioPorId = async (id) => {
+const deleteStudioById = async (id) => {
 
     let MESSAGE = JSON.parse(JSON.stringify(MESSAGE_DEFAULT))
 
@@ -200,7 +200,7 @@ const excluirEstudioPorId = async (id) => {
     }
 }
 //Validação dos dados de cadastro do estudio
-const validarDadosEstudio = async (estudio) => {
+const validateStudioDate = async (estudio) => {
 
     let MESSAGE = JSON.parse(JSON.stringify(MESSAGE_DEFAULT))
 
@@ -233,9 +233,9 @@ const validarDadosEstudio = async (estudio) => {
     }
 }
 module.exports = {
-    listarEstudios,
-    buscarEstudioPorId,
-    inserirEstudio,
-    atualizarEstudio,
-    excluirEstudioPorId
+    getAllStudios,
+    searchStudioById,
+    insertStudio,
+    updateStudio,
+    deleteStudioById
 }

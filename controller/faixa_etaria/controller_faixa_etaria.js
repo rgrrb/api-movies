@@ -1,38 +1,36 @@
 /********************************************************
- * 
- * Objetivo: Arquivo responsável pela manipulação de dados 
- *           entre o APP e a Model (Validações, tratamento de dados,
- *           tratamento de erros, etc)
- * 
+ * * Objetivo: Arquivo responsável pela manipulação de dados 
+ *             entre o APP e a Model (Validações, tratamento de dados,
+ *             tratamento de erros, etc)
  * Data: 29/10/2025
  * Autor: Roger Ribeiro de Oliveira
  * Versão: 1.0
- * 
- *******************************************************/
+ * *******************************************************/
 //Import do arquivo DAO para manipular o crud no banco de dados
-const directorDAO = require('../../model/dao/director.js')
+const ageGroupDAO = require('../../model/dao/age_rating.js')
 
 //Import od arquivo que padroniza todas as mensagens
 const MESSAGE_DEFAULT = require('../module/config_messages.js')
 
-//Retorna uma lista de diretores
-const getAllDirectors = async () => {
+//Retorna uma lista de faixa etárias
+const getAllAgeRatings = async () => {
 
     let MESSAGE = JSON.parse(JSON.stringify(MESSAGE_DEFAULT))
-    //Chama a função do DAO para retornar a lista de diretores   
+    
     //Realizando uma cópia do objeto message_default, permitindo que as alterações desta função
     //não interfiram em outras funções
 
     try {
 
-        let result = await directorDAO.getSelectAllDirectors()
+        //Chama a função do DAO para retornar a lista de faixa etárias  
+        let result = await ageGroupDAO.getSelectAllAgeGroup()
         if (result) {
             if (result.length > 0) {
-                let directorsAmount = result.length
+                let ageGroupAmount = result.length
                 MESSAGE.HEADER.status = MESSAGE.SUCESS_REQUEST.status
                 MESSAGE.HEADER.status_code = MESSAGE.SUCESS_REQUEST.status_code
-                MESSAGE.HEADER.response.directors_Amount = directorsAmount
-                MESSAGE.HEADER.response.directors = result
+                MESSAGE.HEADER.response.age_group_amount = ageGroupAmount
+                MESSAGE.HEADER.response.age_group = result
 
                 return MESSAGE.HEADER //200
             }
@@ -46,8 +44,8 @@ const getAllDirectors = async () => {
         return MESSAGE.ERROR_INTERNAL_SERVER_CONTROLLER //500
     }
 }
-//Retorna um diretor filtrando pelo ID
-const searchDirectorById = async (id) => {
+//Retorna uma faixa etária filtrando pelo ID
+const searchAgeRatingById = async (id) => {
 
     let MESSAGE = JSON.parse(JSON.stringify(MESSAGE_DEFAULT))
 
@@ -55,14 +53,14 @@ const searchDirectorById = async (id) => {
         //Validação de campo obrigatório
         if (id != '' && id != null && id != undefined && id > 0 && !isNaN(id)) {
             //CHAMAR A FUNÇÃO PARA FILTRAR PELO ID
-            let result = await directorDAO.getSelectByIdDirector(parseInt(id))
+            let result = await ageGroupDAO.getSelectByIdAgeGroup(parseInt(id))
 
             if (result) {
                 if (result.length > 0) {
 
                     MESSAGE.HEADER.status = MESSAGE.SUCESS_REQUEST.status
                     MESSAGE.HEADER.status_code = MESSAGE.SUCESS_REQUEST.status_code
-                    MESSAGE.HEADER.response.director = result
+                    MESSAGE.HEADER.response.age_group = result
 
                     return MESSAGE.HEADER //200
 
@@ -81,8 +79,8 @@ const searchDirectorById = async (id) => {
         return MESSAGE.ERROR_INTERNAL_SERVER_CONTROLLER //500
     }
 }
-//Insere um novo diretor
-const insertDirector = async (diretor, contentType) => {
+//Insere uma nova faixa etária
+const insertAgeRating = async (ageGroup, contentType) => {
 
 
     let MESSAGE = JSON.parse(JSON.stringify(MESSAGE_DEFAULT))
@@ -91,24 +89,24 @@ const insertDirector = async (diretor, contentType) => {
 
         if (String(contentType).toUpperCase() == 'APPLICATION/JSON') {
 
-            let validarDados = await validateDirectorData(diretor)
+            let validarDados = await validateAgeGroupData(ageGroup)
 
             if (!validarDados) {
 
-                //Chama a função do DAO para inserir um novo diretor
-                let result = await directorDAO.setInsertDirector(diretor)
+                //Chama a função do DAO para inserir uma nova faixa etária
+                let result = await ageGroupDAO.setInsertAgeGroup(ageGroup)
 
                 if (result) {
 
                     //Chama a função para receber o ID gerado no BD
-                    let lastIdDirector = await directorDAO.getSelectLastIdDirector()
+                    let lastIdAgeGroup = await ageGroupDAO.getSelectLastIdAgeGroup()
 
-                    if (lastIdDirector) {
-                        diretor.id = lastIdDirector
+                    if (lastIdAgeGroup) {
+                        ageGroup.id = lastIdAgeGroup
                         MESSAGE.HEADER.status = MESSAGE.SUCESS_CREATED_ITEM.status
                         MESSAGE.HEADER.status_code = MESSAGE.SUCESS_CREATED_ITEM.status_code
                         MESSAGE.HEADER.message = MESSAGE.SUCESS_CREATED_ITEM.message
-                        MESSAGE.HEADER.response = diretor
+                        MESSAGE.HEADER.response = ageGroup
 
                         return MESSAGE.HEADER
                     } else {
@@ -128,8 +126,8 @@ const insertDirector = async (diretor, contentType) => {
     }
 
 }
-//Atualiza um diretor filtrando pelo ID
-const updateDirector = async (diretor, id, contentType) => {
+//Atualiza uma faixa etária filtrando pelo ID
+const updateAgeRating = async (ageGroup, id, contentType) => {
 
     let MESSAGE = JSON.parse(JSON.stringify(MESSAGE_DEFAULT))
 
@@ -137,24 +135,24 @@ const updateDirector = async (diretor, id, contentType) => {
 
         if (String(contentType).toUpperCase() == 'APPLICATION/JSON') {
 
-            let validarDados = await validateDirectorData(diretor)
+            let validarDados = await validateAgeGroupData(ageGroup)
 
             if (!validarDados) {
 
-                let validarID = await buscarDiretorPorId(id)
+                let validarID = await searchAgeGroupById(id)
 
                 //verifica se o ID existe no BD, caso exista teremos o status 200
                 if (validarID.status_code == 200) {
 
-                    diretor.id = parseInt(id)
-                    //Chama a função do DAO para atualizar um novo diretor
-                    let result = await directorDAO.setUpdateDirector(diretor)
+                    ageGroup.id = parseInt(id)
+                    //Chama a função do DAO para atualizar um novo faixa etaria
+                    let result = await ageGroupDAO.setUpdateAgeGroup(ageGroup)
 
                     if (result) {
                         MESSAGE.HEADER.status = MESSAGE.SUCESS_UPDATED_ITEM.status
                         MESSAGE.HEADER.status_code = MESSAGE.SUCESS_UPDATED_ITEM.status_code
                         MESSAGE.HEADER.message = MESSAGE.SUCESS_UPDATED_ITEM.message
-                        MESSAGE.HEADER.response = diretor
+                        MESSAGE.HEADER.response = ageGroup
 
                         return MESSAGE.HEADER //200
 
@@ -175,15 +173,15 @@ const updateDirector = async (diretor, id, contentType) => {
     }
 
 }
-//Apaga um diretor filtrando pelo ID
-const deleteDirectorById = async (id) => {
+//Apaga uma faixa etaria filtrando pelo ID
+const deleteAgeRatingById = async (id) => {
 
     let MESSAGE = JSON.parse(JSON.stringify(MESSAGE_DEFAULT))
 
     try {
-        let validarID = await searchDirectorById(id)
+        let validarID = await searchAgeGroupById(id)
         if (validarID.status_code == 200) {
-            let result = await directorDAO.setDeleteDirector(parseInt(id))
+            let result = await ageGroupDAO.setDeleteAgeGroup(parseInt(id))
             if (result) {
                 MESSAGE.HEADER.status = MESSAGE.SUCESS_DELETED_ITEM.status
                 MESSAGE.HEADER.status_code = MESSAGE.SUCESS_DELETED_ITEM.status_code
@@ -202,35 +200,26 @@ const deleteDirectorById = async (id) => {
         return MESSAGE.ERROR_INTERNAL_SERVER_CONTROLLER // 500
     }
 }
-//Validação dos dados de cadastro do diretor
-const validateDirectorData = async (diretor) => {
+//Validação dos dados de cadastro da faixa etária
+const validateAgeGroupData = async (ageGroup) => {
 
     let MESSAGE = JSON.parse(JSON.stringify(MESSAGE_DEFAULT))
 
-    if (diretor.nome == '' || diretor.nome == null || diretor.nome == undefined || diretor.nome.trim().length > 120 || typeof diretor.nome !== 'string') {
+    if (ageGroup.nome == '' || ageGroup.nome == null || ageGroup.nome == undefined || ageGroup.nome.trim().length > 50 || typeof ageGroup.nome !== 'string') {
         MESSAGE.ERROR_REQUIRED_FIELDS.invalid_field = "Atributo [NOME] inválido"
         return MESSAGE.ERROR_REQUIRED_FIELDS //400
 
-    } else if (diretor.data_nascimento == undefined || typeof diretor.data_nascimento !== 'string' || diretor.data_nascimento.trim().length !== 10 || !DATE_REGEX.test(diretor.data_nascimento.trim())) {
-        MESSAGE.ERROR_REQUIRED_FIELDS.invalid_field = "Atributo [DATA_NASCIMENTO] inválido"
+    } else if (ageGroup.classificacao_indicativa == undefined || typeof ageGroup.classificacao_indicativa !== 'string' || ageGroup.classificacao_indicativa.trim().length < 150 || ageGroup.classificacao_indicativa == '') {
+        MESSAGE.ERROR_REQUIRED_FIELDS.invalid_field = "Atributo [CLASSIFICACAO INDICATIVA] inválido"
         return MESSAGE.ERROR_REQUIRED_FIELDS //400
-
-    } else if (diretor.altura == '' || diretor.altura == null || diretor.altura == undefined || diretor.altura.length > 8) {
-        MESSAGE.ERROR_REQUIRED_FIELDS.invalid_field = "Atributo [ALTURA] inválido"
-        return MESSAGE.ERROR_REQUIRED_FIELDS //400
-
-    } else if (diretor.peso == '' || diretor.peso == null || diretor.peso == undefined || diretor.peso <= 0) {
-        MESSAGE.ERROR_REQUIRED_FIELDS.invalid_field = "Atributo [PESO] inválido"
-        return MESSAGE.ERROR_REQUIRED_FIELDS //400
-
     } else {
         return false
     }
 }
 module.exports = {
-    getAllDirectors,
-    searchDirectorById,
-    insertDirector,
-    updateDirector,
-    deleteDirectorById
+    getAllAgeRatings,
+    searchAgeRatingById,
+    insertAgeRating,
+    updateAgeRating,
+    deleteAgeRatingById
 }

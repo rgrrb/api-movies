@@ -10,29 +10,29 @@
  * 
  *******************************************************/
 //Import do arquivo DAO para manipular o crud no banco de dados
-const directorDAO = require('../../model/dao/director.js')
+const characterDAO = require('../../model/dao/character.js')
 
 //Import od arquivo que padroniza todas as mensagens
 const MESSAGE_DEFAULT = require('../module/config_messages.js')
 
-//Retorna uma lista de diretores
-const getAllDirectors = async () => {
+//Retorna uma lista de personagens
+const getAllCharacters = async () => {
 
     let MESSAGE = JSON.parse(JSON.stringify(MESSAGE_DEFAULT))
-    //Chama a função do DAO para retornar a lista de diretores   
+
     //Realizando uma cópia do objeto message_default, permitindo que as alterações desta função
     //não interfiram em outras funções
 
     try {
-
-        let result = await directorDAO.getSelectAllDirectors()
+        //Chama a função do DAO para retornar a lista de personagens  
+        let result = await characterDAO.getSelectAllCharacters()
         if (result) {
             if (result.length > 0) {
-                let directorsAmount = result.length
+                let characterAmount = result.length
                 MESSAGE.HEADER.status = MESSAGE.SUCESS_REQUEST.status
                 MESSAGE.HEADER.status_code = MESSAGE.SUCESS_REQUEST.status_code
-                MESSAGE.HEADER.response.directors_Amount = directorsAmount
-                MESSAGE.HEADER.response.directors = result
+                MESSAGE.HEADER.response.characters_amount = characterAmount
+                MESSAGE.HEADER.response.characters = result
 
                 return MESSAGE.HEADER //200
             }
@@ -46,8 +46,8 @@ const getAllDirectors = async () => {
         return MESSAGE.ERROR_INTERNAL_SERVER_CONTROLLER //500
     }
 }
-//Retorna um diretor filtrando pelo ID
-const searchDirectorById = async (id) => {
+//Retorna um personagem filtrando pelo ID
+const searchCharacterById = async (id) => {
 
     let MESSAGE = JSON.parse(JSON.stringify(MESSAGE_DEFAULT))
 
@@ -55,14 +55,14 @@ const searchDirectorById = async (id) => {
         //Validação de campo obrigatório
         if (id != '' && id != null && id != undefined && id > 0 && !isNaN(id)) {
             //CHAMAR A FUNÇÃO PARA FILTRAR PELO ID
-            let result = await directorDAO.getSelectByIdDirector(parseInt(id))
+            let result = await characterDAO.getSelectByIdCharacter(parseInt(id))
 
             if (result) {
                 if (result.length > 0) {
 
                     MESSAGE.HEADER.status = MESSAGE.SUCESS_REQUEST.status
                     MESSAGE.HEADER.status_code = MESSAGE.SUCESS_REQUEST.status_code
-                    MESSAGE.HEADER.response.director = result
+                    MESSAGE.HEADER.response.character = result
 
                     return MESSAGE.HEADER //200
 
@@ -81,8 +81,8 @@ const searchDirectorById = async (id) => {
         return MESSAGE.ERROR_INTERNAL_SERVER_CONTROLLER //500
     }
 }
-//Insere um novo diretor
-const insertDirector = async (diretor, contentType) => {
+//Insere um novo personagem
+const insertCharacter = async (character, contentType) => {
 
 
     let MESSAGE = JSON.parse(JSON.stringify(MESSAGE_DEFAULT))
@@ -91,24 +91,24 @@ const insertDirector = async (diretor, contentType) => {
 
         if (String(contentType).toUpperCase() == 'APPLICATION/JSON') {
 
-            let validarDados = await validateDirectorData(diretor)
+            let validarDados = await validateCharacterData(character)
 
             if (!validarDados) {
 
-                //Chama a função do DAO para inserir um novo diretor
-                let result = await directorDAO.setInsertDirector(diretor)
+                //Chama a função do DAO para inserir um novo personagem
+                let result = await characterDAO.setInsertCharacter(character)
 
                 if (result) {
 
                     //Chama a função para receber o ID gerado no BD
-                    let lastIdDirector = await directorDAO.getSelectLastIdDirector()
+                    let lastIdCharacter = await characterDAO.getSelectLastIdCharacter()
 
-                    if (lastIdDirector) {
-                        diretor.id = lastIdDirector
+                    if (lastIdCharacter) {
+                        character.id = lastIdCharacter
                         MESSAGE.HEADER.status = MESSAGE.SUCESS_CREATED_ITEM.status
                         MESSAGE.HEADER.status_code = MESSAGE.SUCESS_CREATED_ITEM.status_code
                         MESSAGE.HEADER.message = MESSAGE.SUCESS_CREATED_ITEM.message
-                        MESSAGE.HEADER.response = diretor
+                        MESSAGE.HEADER.response = character
 
                         return MESSAGE.HEADER
                     } else {
@@ -128,8 +128,8 @@ const insertDirector = async (diretor, contentType) => {
     }
 
 }
-//Atualiza um diretor filtrando pelo ID
-const updateDirector = async (diretor, id, contentType) => {
+//Atualiza um personagem filtrando pelo ID
+const updateCharacter = async (character, id, contentType) => {
 
     let MESSAGE = JSON.parse(JSON.stringify(MESSAGE_DEFAULT))
 
@@ -137,7 +137,7 @@ const updateDirector = async (diretor, id, contentType) => {
 
         if (String(contentType).toUpperCase() == 'APPLICATION/JSON') {
 
-            let validarDados = await validateDirectorData(diretor)
+            let validarDados = await validateCharacterData(character)
 
             if (!validarDados) {
 
@@ -146,15 +146,15 @@ const updateDirector = async (diretor, id, contentType) => {
                 //verifica se o ID existe no BD, caso exista teremos o status 200
                 if (validarID.status_code == 200) {
 
-                    diretor.id = parseInt(id)
-                    //Chama a função do DAO para atualizar um novo diretor
-                    let result = await directorDAO.setUpdateDirector(diretor)
+                    character.id = parseInt(id)
+                    //Chama a função do DAO para atualizar um novo personagem
+                    let result = await characterDAO.setUpdateDirector(character)
 
                     if (result) {
                         MESSAGE.HEADER.status = MESSAGE.SUCESS_UPDATED_ITEM.status
                         MESSAGE.HEADER.status_code = MESSAGE.SUCESS_UPDATED_ITEM.status_code
                         MESSAGE.HEADER.message = MESSAGE.SUCESS_UPDATED_ITEM.message
-                        MESSAGE.HEADER.response = diretor
+                        MESSAGE.HEADER.response = character
 
                         return MESSAGE.HEADER //200
 
@@ -175,15 +175,15 @@ const updateDirector = async (diretor, id, contentType) => {
     }
 
 }
-//Apaga um diretor filtrando pelo ID
-const deleteDirectorById = async (id) => {
+//Apaga um personagem filtrando pelo ID
+const deleteCharacterById = async (id) => {
 
     let MESSAGE = JSON.parse(JSON.stringify(MESSAGE_DEFAULT))
 
     try {
-        let validarID = await searchDirectorById(id)
+        let validarID = await searchCharacterById(id)
         if (validarID.status_code == 200) {
-            let result = await directorDAO.setDeleteDirector(parseInt(id))
+            let result = await characterDAO.setDeleteCharacter(parseInt(id))
             if (result) {
                 MESSAGE.HEADER.status = MESSAGE.SUCESS_DELETED_ITEM.status
                 MESSAGE.HEADER.status_code = MESSAGE.SUCESS_DELETED_ITEM.status_code
@@ -202,35 +202,48 @@ const deleteDirectorById = async (id) => {
         return MESSAGE.ERROR_INTERNAL_SERVER_CONTROLLER // 500
     }
 }
-//Validação dos dados de cadastro do diretor
-const validateDirectorData = async (diretor) => {
+//Validação dos dados de cadastro do personagem
+const validateCharacterData = async (character) => {
 
     let MESSAGE = JSON.parse(JSON.stringify(MESSAGE_DEFAULT))
 
-    if (diretor.nome == '' || diretor.nome == null || diretor.nome == undefined || diretor.nome.trim().length > 120 || typeof diretor.nome !== 'string') {
+    if (character.nome == '' || character.nome == null || character.nome == undefined || character.nome.trim().length > 120 || typeof character.nome !== 'string') {
         MESSAGE.ERROR_REQUIRED_FIELDS.invalid_field = "Atributo [NOME] inválido"
         return MESSAGE.ERROR_REQUIRED_FIELDS //400
 
-    } else if (diretor.data_nascimento == undefined || typeof diretor.data_nascimento !== 'string' || diretor.data_nascimento.trim().length !== 10 || !DATE_REGEX.test(diretor.data_nascimento.trim())) {
+    } else if (character.data_nascimento == undefined || typeof character.data_nascimento !== 'string' || character.data_nascimento.trim().length !== 10 || !DATE_REGEX.test(character.data_nascimento.trim())) {
         MESSAGE.ERROR_REQUIRED_FIELDS.invalid_field = "Atributo [DATA_NASCIMENTO] inválido"
         return MESSAGE.ERROR_REQUIRED_FIELDS //400
 
-    } else if (diretor.altura == '' || diretor.altura == null || diretor.altura == undefined || diretor.altura.length > 8) {
+    } else if (character.altura == '' || character.altura == null || character.altura == undefined || character.altura.length > 8) {
         MESSAGE.ERROR_REQUIRED_FIELDS.invalid_field = "Atributo [ALTURA] inválido"
         return MESSAGE.ERROR_REQUIRED_FIELDS //400
 
-    } else if (diretor.peso == '' || diretor.peso == null || diretor.peso == undefined || diretor.peso <= 0) {
+    } else if (character.peso == '' || character.peso == null || character.peso == undefined || character.peso <= 0) {
         MESSAGE.ERROR_REQUIRED_FIELDS.invalid_field = "Atributo [PESO] inválido"
         return MESSAGE.ERROR_REQUIRED_FIELDS //400
 
-    } else {
+    } else if (character.descricao == '' || character.descricao == null || character.descricao == undefined || character.descricao.length > 255) {
+        MESSAGE.ERROR_REQUIRED_FIELDS.invalid_field = "Atributo [DESCRIÇÃO] inválido"
+        return MESSAGE.ERROR_REQUIRED_FIELDS //400
+
+    } else if (character.personalidade == '' || character.personalidade == null || character.personalidade == undefined || character.personalidade.length > 150) {
+        MESSAGE.ERROR_REQUIRED_FIELDS.invalid_field = "Atributo [PERSONALIDADE] inválido"
+        return MESSAGE.ERROR_REQUIRED_FIELDS //400
+
+    } else if (character.habilidades == '' || character.habilidades == null || character.habilidades == undefined || character.habilidades.length > 150) {
+        MESSAGE.ERROR_REQUIRED_FIELDS.invalid_field = "Atributo [HABILIDADES] inválido"
+        return MESSAGE.ERROR_REQUIRED_FIELDS //400
+
+    }
+    else {
         return false
     }
 }
 module.exports = {
-    getAllDirectors,
-    searchDirectorById,
-    insertDirector,
-    updateDirector,
-    deleteDirectorById
+    getAllCharacters,
+    searchCharacterById,
+    insertCharacter,
+    updateCharacter,
+    deleteCharacterById
 }

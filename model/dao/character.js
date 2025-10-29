@@ -19,7 +19,7 @@ const getSelectAllCharacters = async () => {
     try {
 
         //Script SQL
-        let sql = `select * from tbl_faixa_etaria order by faixa_etaria_id desc;`
+        let sql = `select * from tbl_personagem order by personagem_id desc;`
 
         //Executa no Banco de Dados o script SQL
         let result = await prisma.$queryRawUnsafe(sql)
@@ -40,7 +40,7 @@ const getSelectByIdCharacter = async (id) => {
     try {
 
         //Script SQL
-        let sql = `select * from tbl_faixa_etaria where faixa_etaria_id=${id};`
+        let sql = `select * from tbl_personagem where personagem_id=${id};`
 
         //Executa no Banco de Dados o script SQL
         let result = await prisma.$queryRawUnsafe(sql)
@@ -59,7 +59,7 @@ const getSelectLastIdCharacter = async () => {
     try {
 
         //Script SQL
-        let sql = `select faixa_etaria_id from tbl_faixa_etaria order by faixa_etaria_id desc limit 1`
+        let sql = `select personagem_id from tbl_personagem order by personagem_id desc limit 1`
 
         //Executa no Banco de Dados o script SQL
         let result = await prisma.$queryRawUnsafe(sql)
@@ -78,16 +78,19 @@ const getSelectLastIdCharacter = async () => {
 const setInsertCharacter = async (ageGroup) => {
 
     try {
-        let sql = `INSERT INTO tbl_faixa_etaria (nome, classificacao_indicativa, caracteristicas)
+        let sql = `INSERT INTO tbl_personagem (nome, data_nascimento, altura, peso, descricao, personalidade, habilidades)
                    VALUES (
-                    '${ageGroup.nome}',
-                    '${ageGroup.classificacao_indicativa}',
-                    '${ageGroup.caracteristicas}'
+                    '${character.nome}',
+                    '${character.data_nascimento}',
+                    '${character.altura}',
+                    '${character.peso}',
+                    '${character.descricao}',
+                    '${character.personalidade}',
+                    '${character.habilidades}'
                    );`
 
         let result = await prisma.$executeRawUnsafe(sql)
-        console.log(sql)
-        console.log(result)
+
         if (result) {
             return true
         }

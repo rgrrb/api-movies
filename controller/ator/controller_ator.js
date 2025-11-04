@@ -9,6 +9,8 @@
 //Import do arquivo DAO para manipular o crud no banco de dados
 const actorDAO = require('../../model/dao/actor.js')
 
+const DATE_REGEX = /^\d{4}-\d{2}-\d{2}$/;
+
 //Import od arquivo que padroniza todas as mensagens
 const MESSAGE_DEFAULT = require('../module/config_messages.js')
 
@@ -88,10 +90,10 @@ const insertActor = async (ator, contentType) => {
 
         if (String(contentType).toUpperCase() == 'APPLICATION/JSON') {
 
-            let validarDados = await validateActorData(ator)
+            let validarDados = validateActorData(ator)
 
             if (!validarDados) {
-
+                console.log("naoentrou")
                 //Chama a função do DAO para inserir um novo ator
                 let result = await actorDAO.setInsertActor(ator)
 
@@ -134,11 +136,11 @@ const updateActor = async (ator, id, contentType) => {
 
         if (String(contentType).toUpperCase() == 'APPLICATION/JSON') {
 
-            let validarDados = await validarDadosAtor(ator)
+            let validarDados = validateActorData(ator)
 
             if (!validarDados) {
 
-                let validarID = await buscarAtorPorId(id)
+                let validarID = await searchActorById(id)
 
                 //verifica se o ID existe no BD, caso exista teremos o status 200
                 if (validarID.status_code == 200) {
@@ -178,7 +180,8 @@ const deleteActorById = async (id) => {
     let MESSAGE = JSON.parse(JSON.stringify(MESSAGE_DEFAULT))
 
     try {
-        let validarID = await buscarAtorPorId(id)
+        let validarID = await searchActorById(id)
+
         if (validarID.status_code == 200) {
             let result = await actorDAO.setDeleteActor(parseInt(id))
             if (result) {
@@ -200,24 +203,29 @@ const deleteActorById = async (id) => {
     }
 }
 //Validação dos dados de cadastro do ator
-const validateActorData = async (ator) => {
+const validateActorData = (ator) => {
 
     let MESSAGE = JSON.parse(JSON.stringify(MESSAGE_DEFAULT))
 
-    if (!ator.nome || typeof ator.nome !== 'string' || ator.nome.trim().length === 0 || ator.nome.trim().length > 120) {
+    if (ator.nome == '' || ator.nome == null || ator.nome == undefined || ator.nome.trim().length > 120 || typeof ator.nome !== 'string') {
         MESSAGE.ERROR_REQUIRED_FIELDS.invalid_field = "Atributo [NOME] inválido"
+        console.log(MESSAGE.ERROR_REQUIRED_FIELDS.invalid_field)
         return MESSAGE.ERROR_REQUIRED_FIELDS //400
-
-    } else if (!ator.data_nascimento || typeof ator.data_nascimento !== 'string' || !DATE_REGEX.test(ator.data_nascimento.trim())) {
+        
+    } else if (ator.data_nascimento == undefined || typeof ator.data_nascimento !== 'string' || ator.data_nascimento.trim().length !== 10 || !DATE_REGEX.test(ator.data_nascimento.trim())) {
+        
         MESSAGE.ERROR_REQUIRED_FIELDS.invalid_field = "Atributo [DATA_NASCIMENTO] inválido"
+        console.log(MESSAGE.ERROR_REQUIRED_FIELDS.invalid_field)
         return MESSAGE.ERROR_REQUIRED_FIELDS //400
-
-    } else if (!ator.altura || isNaN(Number(ator.altura)) || Number(ator.altura) <= 0 || Number(ator.altura) > 3.0) {
+        
+    } else if (ator.altura == '' || ator.altura == null || ator.altura == undefined || ator.altura.length > 8) {
         MESSAGE.ERROR_REQUIRED_FIELDS.invalid_field = "Atributo [ALTURA] inválido"
+        console.log(MESSAGE.ERROR_REQUIRED_FIELDS.invalid_field)
         return MESSAGE.ERROR_REQUIRED_FIELDS //400
 
-    } else if (!ator.peso || isNaN(Number(ator.peso)) || Number(ator.peso) <= 0 || Number(ator.peso) > 500) {
+    } else if (ator.peso == '' || ator.peso == null || ator.peso == undefined || ator.peso <= 0) {
         MESSAGE.ERROR_REQUIRED_FIELDS.invalid_field = "Atributo [PESO] inválido"
+        console.log(MESSAGE.ERROR_REQUIRED_FIELDS.invalid_field)
         return MESSAGE.ERROR_REQUIRED_FIELDS //400
 
     } else {

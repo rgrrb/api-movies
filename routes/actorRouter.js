@@ -2,31 +2,57 @@ const express = require('express')
 const router = express.Router()
 const controllerAtor = require('../controller/ator/controller_ator.js')
 
-// Ator
-router.get('/atores', async (req, res) => {
-  const dados = await controllerAtor.getAllActors()
-  res.status(dados.status_code).json(dados)
+router.get('/atores', async (request, response) =>{
+  let ator = await controllerAtor.getAllActors()
+
+  response.status(ator.status_code)
+  response.json(ator)
 })
 
-router.get('/ator/:id', async (req, res) => {
-  const dados = await controllerAtor.searchActorById(req.params.id)
-  res.status(dados.status_code).json(dados)
+router.get('/ator/:id', async (request, response) =>{
+  
+  let atorId = request.params.id
+
+  let ator = await controllerAtor.searchActorById(atorId)
+
+  response.status(ator.status_code)
+  response.json(ator)
+
 })
 
-router.post('/ator', async (req, res) => {
-  const dados = await controllerAtor.insertActor(req.body, req.headers['content-type'])
-  res.status(dados.status_code).json(dados)
+router.post('/ator', async (request, response) =>{
+  //Recebe o objeto JSON pelo body da requisição
+  let dadosBody = request.body
+
+  let contentType = request.headers['content-type']
+
+  let ator = await controllerAtor.insertActor(dadosBody, contentType)
+
+  response.status(ator.status_code)
+  response.json(ator)
+
 })
 
-router.put('/ator/:id', async (req, res) => {
-  const dados = await controllerAtor.updateActor(req.body, req.params.id, req.headers['content-type'])
-  res.status(dados.status_code).json(dados)
+router.put('/ator/:id', async (request, response) =>{
+  let atorID = request.params.id
+
+  let atorBody = request.body
+
+  let contentType = request.headers['content-type']
+
+  let ator = await controllerAtor.updateActor(atorBody, atorID, contentType)
+
+  response.status(ator.status_code)
+  response.json(ator)
 })
 
-router.delete('/ator/:id', async (req, res) => {
-  const dados = await controllerAtor.deleteActorById(req.params.id)
-  res.status(dados.status_code).json(dados)
+router.delete('/ator/:id', async (request, response) =>{
+  let atorID = request.params.id
+
+  let ator = await controllerAtor.deleteActorById(atorID)
+
+  response.status(ator.status_code)
+  response.json(ator)
 })
-// Ator
 
 module.exports = router

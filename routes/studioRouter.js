@@ -4,29 +4,48 @@ const controllerEstudio = require('../controller/estudio/controller_estudio.js')
 
 
 // Estudio
-router.get('/estudios', async (req, res) => {
-  const dados = await controllerEstudio.getAllStudios()
-  res.status(dados.status_code).json(dados)
+router.get('/estudios', async (request, response) =>{
+  let estudio = await controllerEstudio.getAllStudios()
+
+  response.status(estudio.status_code)
+  response.json(estudio)
 })
 
-router.get('/estudio/:id', async (req, res) => {
-  const dados = await controllerEstudio.searchStudioById(req.params.id)
-  res.status(dados.status_code).json(dados)
+router.get('/estudio/:id', async (request, response) =>{
+  
+  let estudioId = request.params.id
+
+  let estudio = await controllerEstudio.searchStudioById(estudioId)
+
+  response.status(estudio.status_code)
+  response.json(estudio)
+
 })
 
-router.post('/estudio', async (req, res) => {
-  const dados = await controllerEstudio.insertStudio(req.body, req.headers['content-type'])
-  res.status(dados.status_code).json(dados)
+router.post('/estudio/', async (request, response) =>{
+  //Recebe o objeto JSON pelo body da requisição
+  let dadosBody = request.body
+
+  let contentType = request.headers['content-type']
+
+  let estudio = await controllerEstudio.insertStudio(dadosBody, contentType)
+
+  response.status(estudio.status_code)
+  response.json(estudio)
+
 })
 
-router.put('/estudio/:id', async (req, res) => {
-  const dados = await controllerEstudio.updateStudio(req.body, req.params.id, req.headers['content-type'])
-  res.status(dados.status_code).json(dados)
-})
+router.put('/estudio/:id', async (request, response) =>{
+  let estudioId = request.params.id
 
-router.delete('/estudio/:id', async (req, res) => {
-  const dados = await controllerEstudio.deleteStudioById(req.params.id)
-  res.status(dados.status_code).json(dados)
+  let estudioBody = request.body
+
+  let contentType = request.headers['content-type']
+
+  let estudio = await controllerEstudio.updateStudio(estudioBody, estudioId, contentType)
+
+  response.status(estudio.status_code)
+  response.json(estudio)
 })
 
 // Estudio

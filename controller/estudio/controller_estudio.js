@@ -9,6 +9,8 @@
 //Import do arquivo DAO para manipular o crud no banco de dados
 const studioDAO = require('../../model/dao/studio.js')
 
+const CNPJ_REGEX = /^\d{2}\.?\d{3}\.?\d{3}\/?\d{4}-?\d{2}$/;
+
 //Import od arquivo que padroniza todas as mensagens
 const MESSAGE_DEFAULT = require('../module/config_messages.js')
 
@@ -88,7 +90,7 @@ const insertStudio = async (estudio, contentType) => {
 
         if (String(contentType).toUpperCase() == 'APPLICATION/JSON') {
 
-            let validarDados = await validateStudioData(estudio)
+            let validarDados = validateStudioData(estudio)
 
             if (!validarDados) {
 
@@ -134,11 +136,11 @@ const updateStudio = async (estudio, id, contentType) => {
 
         if (String(contentType).toUpperCase() == 'APPLICATION/JSON') {
 
-            let validarDados = await validarDadosEstudio(estudio)
+            let validarDados = validateStudioData(estudio)
 
             if (!validarDados) {
 
-                let validarID = await buscarEstudioPorId(id)
+                let validarID = searchStudioById(id)
 
                 //verifica se o ID existe no BD, caso exista teremos o status 200
                 if (validarID.status_code == 200) {
@@ -168,6 +170,7 @@ const updateStudio = async (estudio, id, contentType) => {
             return MESSAGE.ERROR_CONTENT_TYPE //415
         }
     } catch (error) {
+        console.log('1')
         return MESSAGE.ERROR_INTERNAL_SERVER_CONTROLLER //500
     }
 
@@ -200,7 +203,7 @@ const deleteStudioById = async (id) => {
     }
 }
 //Validação dos dados de cadastro do estudio
-const validateStudioDate = async (estudio) => {
+const validateStudioData = (estudio) => {
 
     let MESSAGE = JSON.parse(JSON.stringify(MESSAGE_DEFAULT))
 
@@ -235,6 +238,7 @@ const validateStudioDate = async (estudio) => {
 module.exports = {
     getAllStudios,
     searchStudioById,
+    validateStudioData,
     insertStudio,
     updateStudio,
     deleteStudioById

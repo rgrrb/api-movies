@@ -15,6 +15,8 @@ const directorDAO = require('../../model/dao/director.js')
 //Import od arquivo que padroniza todas as mensagens
 const MESSAGE_DEFAULT = require('../module/config_messages.js')
 
+const DATE_REGEX = /^\d{4}-\d{2}-\d{2}$/;
+
 //Retorna uma lista de diretores
 const getAllDirectors = async () => {
 
@@ -91,7 +93,7 @@ const insertDirector = async (diretor, contentType) => {
 
         if (String(contentType).toUpperCase() == 'APPLICATION/JSON') {
 
-            let validarDados = await validateDirectorData(diretor)
+            let validarDados = validateDirectorData(diretor)
 
             if (!validarDados) {
 
@@ -137,11 +139,11 @@ const updateDirector = async (diretor, id, contentType) => {
 
         if (String(contentType).toUpperCase() == 'APPLICATION/JSON') {
 
-            let validarDados = await validateDirectorData(diretor)
+            let validarDados = validateDirectorData(diretor)
 
             if (!validarDados) {
 
-                let validarID = await buscarDiretorPorId(id)
+                let validarID = await searchDirectorById(id)
 
                 //verifica se o ID existe no BD, caso exista teremos o status 200
                 if (validarID.status_code == 200) {
@@ -203,7 +205,7 @@ const deleteDirectorById = async (id) => {
     }
 }
 //Validação dos dados de cadastro do diretor
-const validateDirectorData = async (diretor) => {
+const validateDirectorData = (diretor) => {
 
     let MESSAGE = JSON.parse(JSON.stringify(MESSAGE_DEFAULT))
 
@@ -230,6 +232,7 @@ const validateDirectorData = async (diretor) => {
 module.exports = {
     getAllDirectors,
     searchDirectorById,
+    validateDirectorData,
     insertDirector,
     updateDirector,
     deleteDirectorById

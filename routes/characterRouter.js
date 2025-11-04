@@ -3,29 +3,57 @@ const router = express.Router()
 const controllerPersonagens = require('../controller/personagem/controller.personagem.js')
 
 //Personagem
-router.get('/personagens', async (req, res) => {
-  const dados = await controllerPersonagens.getAllCharacters()
-  res.status(dados.status_code).json(dados)
+router.get('/personagens', async (request, response) =>{
+  let personagem = await controllerPersonagens.getAllCharacters()
+
+  response.status(personagem.status_code)
+  response.json(personagem)
 })
 
-router.get('/personagem/:id', async (req, res) => {
-  const dados = await controllerPersonagens.searchCharacterById(req.params.id)
-  res.status(dados.status_code).json(dados)
+router.get('/personagem/:id', async (request, response) =>{
+  
+  let personagemId = request.params.id
+
+  let personagem = await controllerPersonagens.searchCharacterById(personagemId)
+
+  response.status(personagem.status_code)
+  response.json(personagem)
+
 })
 
-router.post('/personagem', async (req, res) => {
-  const dados = await controllerPersonagens.insertCharacter(req.body, req.headers['content-type'])
-  res.status(dados.status_code).json(dados)
+router.post('/personagem', async (request, response) =>{
+  //Recebe o objeto JSON pelo body da requisição
+  let dadosBody = request.body
+
+  let contentType = request.headers['content-type']
+
+  let personagem = await controllerPersonagens.insertCharacter(dadosBody, contentType)
+
+  response.status(personagem.status_code)
+  response.json(personagem)
+
 })
 
-router.put('/personagem/:id', async (req, res) => {
-  const dados = await controllerPersonagens.updateCharacter(req.body, req.params.id, req.headers['content-type'])
-  res.status(dados.status_code).json(dados)
-})
+router.put('/personagem/:id', async (request, response) =>{
+  let personagemId = request.params.id
 
-router.delete('/personagem/:id', async (req, res) => {
-  const dados = await controllerPersonagens.deleteCharacterById(req.params.id)
-  res.status(dados.status_code).json(dados)
+  let personagemBody = request.body
+
+  let contentType = request.headers['content-type']
+
+  let personagem = await controllerPersonagens.updateCharacter(personagemBody, personagemId, contentType)
+
+  response.status(personagem.status_code)
+  response.json(personagem)
 })
-// Personagem
+router.delete('/personagem/:id', async (request, response) =>{
+  
+  let personagemId = request.params.id
+
+  let personagem = await controllerPersonagens.deleteCharacterById(personagemId)
+
+  response.status(personagem.status_code)
+  response.json(personagem)
+
+})
 module.exports = router

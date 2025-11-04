@@ -91,7 +91,7 @@ const insertGenre = async (genre, contentType) => {
 
         if (String(contentType).toUpperCase() == 'APPLICATION/JSON') {
 
-            let validarDados = await validateGenreData(genre)
+            let validarDados = validateGenreData(genre)
 
             if (!validarDados) {
 
@@ -137,7 +137,7 @@ const updateGenre = async (genre, id, contentType) => {
 
         if (String(contentType).toUpperCase() == 'APPLICATION/JSON') {
 
-            let validarDados = await validateGenreData(genre)
+            let validarDados = validateGenreData(genre)
 
             if (!validarDados) {
 
@@ -203,7 +203,7 @@ const deleteGenreById = async (id) => {
     }
 }
 //Validação dos dados de cadastro do genero
-const validateGenreData = async (genre) => {
+const validateGenreData = (genre) => {
 
     let MESSAGE = JSON.parse(JSON.stringify(MESSAGE_DEFAULT))
 

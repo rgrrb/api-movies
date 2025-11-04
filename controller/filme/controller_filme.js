@@ -91,7 +91,7 @@ const inserirFilme = async (filme, contentType) => {
 
         if (String(contentType).toUpperCase() == 'APPLICATION/JSON') {
 
-            let validarDados = await validarDadosFilme(filme)
+            let validarDados = validarDadosFilme(filme)
 
             if (!validarDados) {
 
@@ -203,7 +203,7 @@ const excluirFilmeId = async (id) => {
     }
 }
 //Validação dos dados de cadastro do filme
-const validarDadosFilme = async (filme) => {
+const validarDadosFilme = (filme) => {
 
     let MESSAGE = JSON.parse(JSON.stringify(MESSAGE_DEFAULT))
 
@@ -242,6 +242,7 @@ const validarDadosFilme = async (filme) => {
 module.exports = {
     listarFilmes,
     buscarFilmePorId,
+    validarDadosFilme,
     inserirFilme,
     atualizarFilme,
     excluirFilmeId

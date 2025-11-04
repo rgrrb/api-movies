@@ -89,7 +89,7 @@ const insertAgeRating = async (ageGroup, contentType) => {
 
         if (String(contentType).toUpperCase() == 'APPLICATION/JSON') {
 
-            let validarDados = await validateAgeGroupData(ageGroup)
+            let validarDados = validateAgeGroupData(ageGroup)
 
             if (!validarDados) {
 
@@ -135,7 +135,7 @@ const updateAgeRating = async (ageGroup, id, contentType) => {
 
         if (String(contentType).toUpperCase() == 'APPLICATION/JSON') {
 
-            let validarDados = await validateAgeGroupData(ageGroup)
+            let validarDados = validateAgeGroupData(ageGroup)
 
             if (!validarDados) {
 
@@ -201,7 +201,7 @@ const deleteAgeRatingById = async (id) => {
     }
 }
 //Validação dos dados de cadastro da faixa etária
-const validateAgeGroupData = async (ageGroup) => {
+const validateAgeGroupData = (ageGroup) => {
 
     let MESSAGE = JSON.parse(JSON.stringify(MESSAGE_DEFAULT))
 
@@ -219,6 +219,7 @@ const validateAgeGroupData = async (ageGroup) => {
 module.exports = {
     getAllAgeRatings,
     searchAgeRatingById,
+    validateAgeGroupData,
     insertAgeRating,
     updateAgeRating,
     deleteAgeRatingById

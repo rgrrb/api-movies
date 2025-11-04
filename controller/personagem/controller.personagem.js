@@ -15,6 +15,8 @@ const characterDAO = require('../../model/dao/character.js')
 //Import od arquivo que padroniza todas as mensagens
 const MESSAGE_DEFAULT = require('../module/config_messages.js')
 
+const DATE_REGEX = /^\d{4}-\d{2}-\d{2}$/;
+
 //Retorna uma lista de personagens
 const getAllCharacters = async () => {
 
@@ -91,8 +93,9 @@ const insertCharacter = async (character, contentType) => {
 
         if (String(contentType).toUpperCase() == 'APPLICATION/JSON') {
 
-            let validarDados = await validateCharacterData(character)
+            let validarDados = validateCharacterData(character)
 
+            console.log("entrou")
             if (!validarDados) {
 
                 //Chama a função do DAO para inserir um novo personagem
@@ -128,6 +131,7 @@ const insertCharacter = async (character, contentType) => {
     }
 
 }
+
 //Atualiza um personagem filtrando pelo ID
 const updateCharacter = async (character, id, contentType) => {
 
@@ -137,7 +141,7 @@ const updateCharacter = async (character, id, contentType) => {
 
         if (String(contentType).toUpperCase() == 'APPLICATION/JSON') {
 
-            let validarDados = await validateCharacterData(character)
+            let validarDados = validateCharacterData(character)
 
             if (!validarDados) {
 
@@ -203,7 +207,7 @@ const deleteCharacterById = async (id) => {
     }
 }
 //Validação dos dados de cadastro do personagem
-const validateCharacterData = async (character) => {
+const validateCharacterData = (character) => {
 
     let MESSAGE = JSON.parse(JSON.stringify(MESSAGE_DEFAULT))
 

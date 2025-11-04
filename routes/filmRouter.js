@@ -10,36 +10,57 @@ const controllerFilme = require('../controller/filme/controller_filme.js')
 const bodyParserJSON = bodyParser.json()
 
 // Filme
-router.get('/filmes', cors(), async (req, res) => {
-    let dados = await controllerFilme.listarFilmes()
-    res.status(dados.status_code).json(dados)
+router.get('/filmes', cors(), async (request, response) =>{
+    let filme = await controllerFilme.listarFilmes()
+    response.status(filme.status_code)
+    response.json(filme)
 })
 
-router.get('/filme/:id', cors(), async (req, res) => {
-    let id = req.params.id
-    let dados = await controllerFilme.buscarFilmePorId(id)
-    res.status(dados.status_code).json(dados)
+router.get('/filme/:id', cors(), async (request, response) =>{
+    
+    let filmeId = request.params.id
+
+    let filme = await controllerFilme.buscarFilmePorId(filmeId)
+
+    response.status(filme.status_code)
+    response.json(filme)
+
 })
 
-router.post('/filme', cors(), bodyParserJSON, async (req, res) => {
-    let dadosBody = req.body
-    let contentType = req.headers['content-type']
-    let dados = await controllerFilme.inserirFilme(dadosBody, contentType)
-    res.status(dados.status_code).json(dados)
+router.post('/filme', async (request, response) =>{
+    //Recebe o objeto JSON pelo body da requisição
+    let dadosBody = request.body
+
+    let contentType = request.headers['content-type']
+
+    let filme = await controllerFilme.inserirFilme(dadosBody, contentType)
+
+    response.status(filme.status_code)
+    response.json(filme)
+
 })
 
-router.put('/filme/:id', cors(), bodyParserJSON, async (req, res) => {
-    let id = req.params.id
-    let dadosBody = req.body
-    let contentType = req.headers['content-type']
-    let dados = await controllerFilme.atualizarFilme(dadosBody, id, contentType)
-    res.status(dados.status_code).json(dados)
+router.put('/filme/:id', async (request, response) =>{
+    let filmeID = request.params.id
+
+    let filmeBody = request.body
+
+    let contentType = request.headers['content-type']
+
+    let filme = await controllerFilme.atualizarFilme(filmeBody, filmeID, contentType)
+
+    response.status(filme.status_code)
+    response.json(filme)
 })
 
-router.delete('/filme/:id', cors(), async (req, res) => {
-    let id = req.params.id
-    let dados = await controllerFilme.excluirFilmeId(id)
-    res.status(dados.status_code).json(dados)
+router.delete('/filme/:id', async (request, response) =>{
+    let filmeID = request.params.id
+
+    let filme = await controllerFilme.excluirFilmeId(filmeID)
+
+    response.status(filme.status_code)
+    response.json(filme)
 })
+
 // Filme
 module.exports = router

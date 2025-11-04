@@ -207,19 +207,19 @@ const validateDirectorData = async (diretor) => {
 
     let MESSAGE = JSON.parse(JSON.stringify(MESSAGE_DEFAULT))
 
-    if (diretor.nome == '' || diretor.nome == null || diretor.nome == undefined || diretor.nome.trim().length > 120 || typeof diretor.nome !== 'string') {
+    if (!diretor.nome || typeof diretor.nome !== 'string' || diretor.nome.trim().length === 0 || diretor.nome.trim().length > 120) {
         MESSAGE.ERROR_REQUIRED_FIELDS.invalid_field = "Atributo [NOME] inválido"
         return MESSAGE.ERROR_REQUIRED_FIELDS //400
 
-    } else if (diretor.data_nascimento == undefined || typeof diretor.data_nascimento !== 'string' || diretor.data_nascimento.trim().length !== 10 || !DATE_REGEX.test(diretor.data_nascimento.trim())) {
+    } else if (!diretor.data_nascimento || typeof diretor.data_nascimento !== 'string' || !DATE_REGEX.test(diretor.data_nascimento.trim())) {
         MESSAGE.ERROR_REQUIRED_FIELDS.invalid_field = "Atributo [DATA_NASCIMENTO] inválido"
         return MESSAGE.ERROR_REQUIRED_FIELDS //400
 
-    } else if (diretor.altura == '' || diretor.altura == null || diretor.altura == undefined || diretor.altura.length > 8) {
+    } else if (!diretor.altura || isNaN(Number(diretor.altura)) || Number(diretor.altura) <= 0 || Number(diretor.altura) > 3.0) {
         MESSAGE.ERROR_REQUIRED_FIELDS.invalid_field = "Atributo [ALTURA] inválido"
         return MESSAGE.ERROR_REQUIRED_FIELDS //400
 
-    } else if (diretor.peso == '' || diretor.peso == null || diretor.peso == undefined || diretor.peso <= 0) {
+    } else if (!diretor.peso || isNaN(Number(diretor.peso)) || Number(diretor.peso) <= 0 || Number(diretor.peso) > 500) {
         MESSAGE.ERROR_REQUIRED_FIELDS.invalid_field = "Atributo [PESO] inválido"
         return MESSAGE.ERROR_REQUIRED_FIELDS //400
 

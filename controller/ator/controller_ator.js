@@ -88,7 +88,7 @@ const insertActor = async (ator, contentType) => {
 
         if (String(contentType).toUpperCase() == 'APPLICATION/JSON') {
 
-            let validarDados = await validarDadosAtor(ator)
+            let validarDados = await validateActorData(ator)
 
             if (!validarDados) {
 
@@ -204,19 +204,19 @@ const validateActorData = async (ator) => {
 
     let MESSAGE = JSON.parse(JSON.stringify(MESSAGE_DEFAULT))
 
-    if (ator.nome == '' || ator.nome == null || ator.nome == undefined || ator.nome.trim().length > 120 || typeof ator.nome !== 'string') {
+    if (!ator.nome || typeof ator.nome !== 'string' || ator.nome.trim().length === 0 || ator.nome.trim().length > 120) {
         MESSAGE.ERROR_REQUIRED_FIELDS.invalid_field = "Atributo [NOME] inválido"
         return MESSAGE.ERROR_REQUIRED_FIELDS //400
 
-    } else if (ator.data_nascimento == undefined || typeof ator.data_nascimento !== 'string' || ator.data_nascimento.trim().length !== 10 || !DATE_REGEX.test(ator.data_nascimento.trim())) {
+    } else if (!ator.data_nascimento || typeof ator.data_nascimento !== 'string' || !DATE_REGEX.test(ator.data_nascimento.trim())) {
         MESSAGE.ERROR_REQUIRED_FIELDS.invalid_field = "Atributo [DATA_NASCIMENTO] inválido"
         return MESSAGE.ERROR_REQUIRED_FIELDS //400
 
-    } else if (ator.altura == '' || ator.altura == null || ator.altura == undefined || ator.altura.length > 8) {
+    } else if (!ator.altura || isNaN(Number(ator.altura)) || Number(ator.altura) <= 0 || Number(ator.altura) > 3.0) {
         MESSAGE.ERROR_REQUIRED_FIELDS.invalid_field = "Atributo [ALTURA] inválido"
         return MESSAGE.ERROR_REQUIRED_FIELDS //400
 
-    } else if (ator.peso == '' || ator.peso == null || ator.peso == undefined || ator.peso <= 0) {
+    } else if (!ator.peso || isNaN(Number(ator.peso)) || Number(ator.peso) <= 0 || Number(ator.peso) > 500) {
         MESSAGE.ERROR_REQUIRED_FIELDS.invalid_field = "Atributo [PESO] inválido"
         return MESSAGE.ERROR_REQUIRED_FIELDS //400
 
@@ -227,6 +227,7 @@ const validateActorData = async (ator) => {
 module.exports = {
     getAllActors,
     searchActorById,
+    validateActorData,
     insertActor,
     updateActor,
     deleteActorById

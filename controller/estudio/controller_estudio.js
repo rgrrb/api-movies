@@ -204,31 +204,31 @@ const validateStudioDate = async (estudio) => {
 
     let MESSAGE = JSON.parse(JSON.stringify(MESSAGE_DEFAULT))
 
-    if (estudio.nome == '' || estudio.nome == null || estudio.nome == undefined || estudio.nome.trim().length > 120 || typeof estudio.nome !== 'string') {
-        MESSAGE.ERROR_REQUIRED_FIELDS.invalid_field = "Atributo [NOME] inválido"
-        return MESSAGE.ERROR_REQUIRED_FIELDS //400
+    if (!estudio.nome || typeof estudio.nome !== 'string' || estudio.nome.trim().length === 0 || estudio.nome.trim().length > 120) {
+    MESSAGE.ERROR_REQUIRED_FIELDS.invalid_field = "Atributo [NOME] inválido"
+    return MESSAGE.ERROR_REQUIRED_FIELDS //400
 
-    } else if (estudio.cnpj == undefined || typeof estudio.cnpj !== 'string' || estudio.cnpj.trim().length !== 14 || !CNPJ_REGEX.test(estudio.cnpj.trim())) {
-        MESSAGE.ERROR_REQUIRED_FIELDS.invalid_field = "Atributo [CNPJ] inválido"
-        return MESSAGE.ERROR_REQUIRED_FIELDS //400
+} else if (!estudio.cnpj || typeof estudio.cnpj !== 'string' || !CNPJ_REGEX.test(estudio.cnpj.trim())) {
+    MESSAGE.ERROR_REQUIRED_FIELDS.invalid_field = "Atributo [CNPJ] inválido"
+    return MESSAGE.ERROR_REQUIRED_FIELDS //400
 
-    } else if (estudio.logradouro == undefined || typeof estudio.logradouro !== 'string' || estudio.logradouro.trim().length === 0 || estudio.logradouro.length > 120) {
-        MESSAGE.ERROR_REQUIRED_FIELDS.invalid_field = "Atributo [ALTURA] inválido"
-        return MESSAGE.ERROR_REQUIRED_FIELDS //400
+} else if (!estudio.logradouro || typeof estudio.logradouro !== 'string' || estudio.logradouro.trim().length === 0 || estudio.logradouro.trim().length > 120) {
+    MESSAGE.ERROR_REQUIRED_FIELDS.invalid_field = "Atributo [LOGRADOURO] inválido"
+    return MESSAGE.ERROR_REQUIRED_FIELDS //400
 
-    } else if (estudio.bairro == undefined || typeof estudio.bairro !== 'string' || estudio.bairro.trim().length === 0 || estudio.bairro.length > 50) {
-        MESSAGE.ERROR_REQUIRED_FIELDS.invalid_field = "Atributo [PESO] inválido"
-        return MESSAGE.ERROR_REQUIRED_FIELDS //400
+} else if (!estudio.bairro || typeof estudio.bairro !== 'string' || estudio.bairro.trim().length === 0 || estudio.bairro.trim().length > 50) {
+    MESSAGE.ERROR_REQUIRED_FIELDS.invalid_field = "Atributo [BAIRRO] inválido"
+    return MESSAGE.ERROR_REQUIRED_FIELDS //400
 
-    } else if (estudio.cidade == undefined || typeof estudio.cidade !== 'string' || estudio.cidade.trim().length === 0 || estudio.cidade.length > 20) {
-        MESSAGE.ERROR_REQUIRED_FIELDS.invalid_field = "Atributo [CIDADE] inválido"
-        return MESSAGE.ERROR_REQUIRED_FIELDS //400
+} else if (!estudio.cidade || typeof estudio.cidade !== 'string' || estudio.cidade.trim().length === 0 || estudio.cidade.trim().length > 50) {
+    MESSAGE.ERROR_REQUIRED_FIELDS.invalid_field = "Atributo [CIDADE] inválido"
+    return MESSAGE.ERROR_REQUIRED_FIELDS //400
 
-    } else if (estudio.complemento == undefined || typeof estudio.complemento !== 'string' || estudio.complemento.trim().length === 0 || estudio.complemento.length > 20) {
-        MESSAGE.ERROR_REQUIRED_FIELDS.invalid_field = "Atributo [COMPLEMENTO] inválido"
-        return MESSAGE.ERROR_REQUIRED_FIELDS //400
+} else if (estudio.complemento && (typeof estudio.complemento !== 'string' || estudio.complemento.trim().length > 100)) {
+    MESSAGE.ERROR_REQUIRED_FIELDS.invalid_field = "Atributo [COMPLEMENTO] inválido"
+    return MESSAGE.ERROR_REQUIRED_FIELDS //400
 
-    } else {
+} else {
         return false
     }
 }

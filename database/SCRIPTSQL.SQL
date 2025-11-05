@@ -149,3 +149,14 @@ insert into tbl_personagem
  'Tiroteio e táticas militares.');
 
 -- Personagem
+CREATE TABLE tbl_filme_genero(
+    filme_genero_id int auto_increment primary key,
+    filme_id INT NOT NULL,
+    genero_id INT NOT NULL,
+    
+    constraint FK_FILME_FILME_GENERO
+    foreign key(filme_id) references tbl_filme(filme_id),
+    
+    constraint FK_GENERO_FILME_GENERO
+    foreign key(genero_id) references tbl_genero(genero_id)
+);

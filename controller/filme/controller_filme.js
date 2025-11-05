@@ -11,6 +11,7 @@
  *******************************************************/
 //Import do arquivo DAO para manipular o crud no banco de dados
 const filmeDAO = require('../../model/dao/filme.js')
+const controllerfilmeGenero = require('./controller_filme_genero.js')
 
 //Import od arquivo que padroniza todas as mensagens
 const MESSAGE_DEFAULT = require('../module/config_messages.js')
@@ -100,10 +101,29 @@ const inserirFilme = async (filme, contentType) => {
 
                 if (result) {
 
+
                     //Chama a função para receber o ID gerado no BD
                     let lastIdFilme = await filmeDAO.getSelectLastIdFilm()
 
                     if (lastIdFilme) {
+
+                        //Processamento para inserir dados na tabela de relação
+                    //Relação entre filme e genero
+
+                    // Repetição para pegar cada genero e enviar para o
+                    // DAO do filmeGenero
+
+                    filme.genero.forEach(async (genero) => {
+                        let filmeGenero = {
+                            filme_id: lastIdFilme,
+                            genero_id: genero.id
+                        }
+
+                        let resultFilmeGenero = await controllerfilmeGenero.insertFilmGenre(filmeGenero, contentType)
+
+                    })
+
+
                         filme.id = lastIdFilme
                         MESSAGE.HEADER.status = MESSAGE.SUCESS_CREATED_ITEM.status
                         MESSAGE.HEADER.status_code = MESSAGE.SUCESS_CREATED_ITEM.status_code
@@ -124,6 +144,7 @@ const inserirFilme = async (filme, contentType) => {
             return MESSAGE.ERROR_CONTENT_TYPE //415
         }
     } catch (error) {
+        console.log(error)
         return MESSAGE.ERROR_INTERNAL_SERVER_CONTROLLER
     }
 

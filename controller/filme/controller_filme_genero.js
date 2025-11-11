@@ -92,8 +92,9 @@ const listGenreIdFilm = async (filmeId) => {
             let result = await filmGenreDAO.getSelectGenreByIdFilm(parseInt(filmeId))
 
             if (result) {
+                
                 if (result.length > 0) {
-
+                    
                     MESSAGE.HEADER.status = MESSAGE.SUCESS_REQUEST.status
                     MESSAGE.HEADER.status_code = MESSAGE.SUCESS_REQUEST.status_code
                     MESSAGE.HEADER.response.film_genre = result
@@ -273,7 +274,7 @@ const deleteGenreById = async (id) => {
 }
 //Validação dos dados de cadastro do genero
 const validateFilmGenreData = (filmGenre) => {
-    console.log("entrou")
+
     let MESSAGE = JSON.parse(JSON.stringify(MESSAGE_DEFAULT))
 
     if (filmGenre.filme_id == '' || filmGenre.filme_id == null || filmGenre.filme_id == undefined || isNaN(filmGenre.filme_id) || filmGenre.filme_id <= 0) {

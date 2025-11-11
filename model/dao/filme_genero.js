@@ -23,7 +23,7 @@ const getSelectAllFilmsGenres = async () => {
 
         //Executa no Banco de Dados o script SQL
         let result = await prisma.$queryRawUnsafe(sql)
-        console.log(result)
+
         if (Array.isArray(result))
             return result
         else
@@ -112,7 +112,7 @@ const getSelectLastId = async () => {
 
         //Executa no Banco de Dados o script SQL
         let result = await prisma.$queryRawUnsafe(sql)
-        console.log(result)
+
         if (Array.isArray(result))
             return Number(result[0].filme_genero_id)
         else

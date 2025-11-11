@@ -51,6 +51,7 @@ const ERROR_CONTENT_TYPE = {
     status_code: 415,
     message: 'não foi possível processar a requisição, pois o tipo de contéudo enviado no body não é permitido. Deve-se utilizar apenas JSON na API'
 }
+const ERROR_RELATION_TABLE = {status: false, status_code: 200,message: 'A requisição foi bem sucedida na criação do item principal, porém houveram problemas na tabela de relacionamento!'}
 /*******************************MENSAGENS DE SUCESSO DO PROJETO**********************************/
 
 const SUCESS_REQUEST = {
@@ -85,6 +86,7 @@ module.exports = {
     ERROR_INTERNAL_SERVER_MODEL,
     ERROR_INTERNAL_SERVER_CONTROLLER,
     ERROR_REQUIRED_FIELDS,
-    ERROR_CONTENT_TYPE
+    ERROR_CONTENT_TYPE,
+    ERROR_RELATION_TABLE
     
 }

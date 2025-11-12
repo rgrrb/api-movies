@@ -160,3 +160,22 @@ CREATE TABLE tbl_filme_genero(
     constraint FK_GENERO_FILME_GENERO
     foreign key(genero_id) references tbl_genero(genero_id)
 );
+    
+DELIMITER $$
+CREATE TRIGGER trg_quebrar_constraint_deletar_filme_delete
+BEFORE DELETE on tbl_filme
+FOR EACH ROW
+BEGIN
+    DELETE FROM tbl_filme_genero WHERE filme_id = OLD.filme_id;
+END $$
+DELIMITER ;
+
+DELIMITER $$
+CREATE TRIGGER trg_quebrar_constraint_deletar_filme_update
+BEFORE UPDATE on tbl_filme
+FOR EACH ROW
+BEGIN
+    DELETE FROM tbl_filme_genero WHERE filme_id = OLD.filme_id;
+END $$
+DELIMITER ;
+

@@ -11,8 +11,8 @@
  *******************************************************/
 //Import do arquivo DAO para manipular o crud no banco de dados
 const filmeDAO = require('../../model/dao/filme.js')
-const controllerfilmeGenero = require('./controller_filme_genero.js')
-
+const controllerFilmeGenero = require('./controller_filme_genero.js')
+const controllerAgeGroup = require('../faixa_etaria/controller_faixa_etaria.js')
 //Import od arquivo que padroniza todas as mensagens
 const MESSAGE_DEFAULT = require('../module/config_messages.js')
 
@@ -32,8 +32,8 @@ const listarFilmes = async () => {
 
                 //Processamento para adicionar os generos em cada filme
                 for (filme of result) {
-                    let filmGenres = await controllerfilmeGenero.listGenreIdFilm(filme.filme_id)
-                    
+                    let filmGenres = await controllerFilmeGenero.listGenreIdFilm(filme.filme_id)
+
                     if (filmGenres.status_code == 200) {
                         filme.genero = filmGenres.response.film_genre
 
@@ -77,16 +77,18 @@ const buscarFilmePorId = async (id) => {
                 if (result.length > 0) {
 
                     for (filme of result) {
-                        let filmGenres = await controllerfilmeGenero.listGenreIdFilm(filme.filme_id)
-                        
+                        let filmGenres = await controllerFilmeGenero.listGenreIdFilm(filme.filme_id)
+
                         if (filmGenres.status_code == 200) {
                             filme.genero = filmGenres.response.film_genre
-    
+
                         } else {
                             filme.genero = MESSAGE.ERROR_NOT_FOUND.message
                         }
-    
+
                     }
+
+                    
 
                     MESSAGE.HEADER.status = MESSAGE.SUCESS_REQUEST.status
                     MESSAGE.HEADER.status_code = MESSAGE.SUCESS_REQUEST.status_code
@@ -147,15 +149,25 @@ const inserirFilme = async (filme, contentType) => {
                                 genero_id: genero.id
                             }
 
-                            let resultFilmeGenero = await controllerfilmeGenero.insertFilmGenre(filmeGenero, contentType)
+                            let resultFilmeGenero = await controllerFilmeGenero.insertFilmGenre(filmeGenero, contentType)
 
                             if (resultFilmeGenero.status_code != 201) {
                                 return MESSAGE.ERROR_RELATION_TABLE
                             }
                         }
 
+                        let ageGroup = await controllerAgeGroup.searchAgeRatingById(filme.faixa_etaria)
 
-                        filme.id = lastIdFilme
+                        if (ageGroup.status_code == 200) {
+                            let faixa_etaria = ageGroup.response.age_group[0]
+                            filme.faixa_etaria = [faixa_etaria]
+
+                        } else {   
+                            MESSAGE.HEADER.response.filme.faixa_etaria = MESSAGE.ERROR_NOT_FOUND.message
+                        }
+
+
+                        filme.filme_id = lastIdFilme
                         MESSAGE.HEADER.status = MESSAGE.SUCESS_CREATED_ITEM.status
                         MESSAGE.HEADER.status_code = MESSAGE.SUCESS_CREATED_ITEM.status_code
                         MESSAGE.HEADER.message = MESSAGE.SUCESS_CREATED_ITEM.message
@@ -166,7 +178,7 @@ const inserirFilme = async (filme, contentType) => {
                         delete filme.genero
 
                         //Pesquisa no banco de dados quais os generos e os seus dados que foram inseridos na tabela de relação
-                        let resultGenerosFilme = await controllerfilmeGenero.listGenreIdFilm(lastIdFilme)
+                        let resultGenerosFilme = await controllerFilmeGenero.listGenreIdFilm(lastIdFilme)
 
                         //Adiciona novamente o atributo genero com todas as informações do genero (ID, Nome)
                         filme.genero = resultGenerosFilme.response.film_genre
@@ -215,9 +227,35 @@ const atualizarFilme = async (filme, id, contentType) => {
                     let result = await filmeDAO.setUpdateFilms(filme)
 
                     if (result) {
+
+                        for (genero of filme.genero) {
+                            let filmeGenero = {
+                                filme_id: filme.id,
+                                genero_id: genero.id
+                            }
+
+                            let resultFilmeGenero = await controllerFilmeGenero.insertFilmGenre(filmeGenero, contentType)
+
+                            if (resultFilmeGenero.status_code != 201) {
+                                return MESSAGE.ERROR_RELATION_TABLE
+                            }
+
+                        }
+
                         MESSAGE.HEADER.status = MESSAGE.SUCESS_UPDATED_ITEM.status
                         MESSAGE.HEADER.status_code = MESSAGE.SUCESS_UPDATED_ITEM.status_code
                         MESSAGE.HEADER.message = MESSAGE.SUCESS_UPDATED_ITEM.message
+
+                        //Processamento para trazer dados dos generos cadastrados na tabela de relação
+                        //Apaga o atributo genero que chegou no POST com apenas os ID's
+                        delete filme.genero
+
+                        //Pesquisa no banco de dados quais os generos e os seus dados que foram inseridos na tabela de relação
+                        let resultGenerosFilme = await controllerFilmeGenero.listGenreIdFilm(id)
+
+                        //Adiciona novamente o atributo genero com todas as informações do genero (ID, Nome)
+                        filme.genero = resultGenerosFilme.response.film_genre
+
                         MESSAGE.HEADER.response = filme
 
                         return MESSAGE.HEADER //200

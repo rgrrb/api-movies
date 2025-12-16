@@ -26,6 +26,9 @@ const diretorRouter = require('./routes/directorRouter.js')
 const estudioRouter = require('./routes/studioRouter.js')
 const faixaEtariaRouter = require('./routes/ageGroupRouter.js')
 const personagemRouter = require('./routes/characterRouter.js')
+const filmActorRouter = require('./routes/filmActorRouter.js')
+const filmDirectorRouter = require('./routes/filmDirectorRouter.js')
+const filmStudioRouter = require('./routes/filmStudioRouter.js')
 
 // Usa as rotas
 app.use('/v1/locadora', filmeRouter)
@@ -35,6 +38,9 @@ app.use('/v1/locadora', diretorRouter)
 app.use('/v1/locadora', estudioRouter)
 app.use('/v1/locadora', faixaEtariaRouter)
 app.use('/v1/locadora', personagemRouter)
+app.use('/v1/locadora', filmActorRouter)
+app.use('/v1/locadora', filmDirectorRouter)
+app.use('/v1/locadora', filmStudioRouter)
 
 // Inicializa o servidor
 app.listen(PORT, () => console.log(`conectado`))

@@ -1,3 +1,6 @@
+DROP DATABASE IF EXISTS db_locadora_roger_filme_ds2t_25_2;
+CREATE DATABASE db_locadora_roger_filme_ds2t_25_2;
+USE db_locadora_roger_filme_ds2t_25_2;
 -- Filme
 CREATE TABLE tbl_filme(
 	filme_id int PRIMARY KEY NOT NULL auto_increment,
@@ -176,6 +179,140 @@ BEFORE UPDATE on tbl_filme
 FOR EACH ROW
 BEGIN
     DELETE FROM tbl_filme_genero WHERE filme_id = OLD.filme_id;
+END $$
+DELIMITER ;
+
+-- Tabela de relacionamento entre filmes e atores
+CREATE TABLE tbl_filme_ator(
+    filme_ator_id INT AUTO_INCREMENT PRIMARY KEY,
+    filme_id INT NOT NULL,
+    ator_id INT NOT NULL,
+    papel VARCHAR(100) NOT NULL,
+
+    CONSTRAINT FK_FILME_FILME_ATOR
+    FOREIGN KEY(filme_id) REFERENCES tbl_filme(filme_id)
+    ON DELETE CASCADE,
+
+    CONSTRAINT FK_ATOR_FILME_ATOR
+    FOREIGN KEY(ator_id) REFERENCES tbl_ator(ator_id)
+    ON DELETE CASCADE
+);
+
+-- Tabela de relacionamento entre filmes e diretores
+CREATE TABLE tbl_filme_diretor(
+    filme_diretor_id INT AUTO_INCREMENT PRIMARY KEY,
+    filme_id INT NOT NULL,
+    diretor_id INT NOT NULL,
+
+    CONSTRAINT FK_FILME_FILME_DIRETOR
+    FOREIGN KEY(filme_id) REFERENCES tbl_filme(filme_id)
+    ON DELETE CASCADE,
+
+    CONSTRAINT FK_DIRETOR_FILME_DIRETOR
+    FOREIGN KEY(diretor_id) REFERENCES tbl_diretor(diretor_id)
+    ON DELETE CASCADE
+);
+
+-- Inserção de dados de exemplo para as novas tabelas relacionais
+-- Inserindo atores para os filmes existentes
+INSERT INTO tbl_filme_ator (filme_id, ator_id, papel) VALUES
+(1, 1, 'Django'),
+(1, 3, 'Dr. King Schultz'),
+(1, 2, 'Broomhilda von Shaft'),
+(2, 4, 'Rey'),
+(2, 5, 'Finn');
+
+-- Inserindo diretores para os filmes existentes
+INSERT INTO tbl_filme_diretor (filme_id, diretor_id) VALUES
+(1, 1),  -- Django Livre
+(2, 2);  -- Star Wars
+
+-- Tabela de relacionamento entre filmes e estúdios
+CREATE TABLE tbl_filme_estudio(
+    filme_estudio_id INT AUTO_INCREMENT PRIMARY KEY,
+    filme_id INT NOT NULL,
+    estudio_id INT NOT NULL,
+    tipo_producao ENUM('Principal', 'Co-produção', 'Distribuição') NOT NULL DEFAULT 'Principal',
+
+    CONSTRAINT FK_FILME_FILME_ESTUDIO
+    FOREIGN KEY(filme_id) REFERENCES tbl_filme(filme_id)
+    ON DELETE CASCADE,
+
+    CONSTRAINT FK_ESTUDIO_FILME_ESTUDIO
+    FOREIGN KEY(estudio_id) REFERENCES tbl_estudio(estudio_id)
+    ON DELETE CASCADE
+);
+
+-- Inserção de dados de exemplo para tbl_filme_estudio
+INSERT INTO tbl_filme_estudio (filme_id, estudio_id, tipo_producao) VALUES
+(1, 1, 'Principal'),
+(1, 2, 'Co-produção'),
+(2, 3, 'Principal'),
+(2, 4, 'Distribuição');
+
+-- Triggers para tbl_filme_ator
+DELIMITER $$
+CREATE TRIGGER trg_quebrar_constraint_deletar_filme_ator_delete
+BEFORE DELETE on tbl_filme
+FOR EACH ROW
+BEGIN
+    DELETE FROM tbl_filme_ator WHERE filme_id = OLD.filme_id;
+END $$
+DELIMITER ;
+
+DELIMITER $$
+CREATE TRIGGER trg_quebrar_constraint_deletar_filme_ator_update
+BEFORE UPDATE on tbl_filme
+FOR EACH ROW
+BEGIN
+    DELETE FROM tbl_filme_ator WHERE filme_id = OLD.filme_id;
+END $$
+DELIMITER ;
+
+-- Triggers para tbl_filme_diretor
+DELIMITER $$
+CREATE TRIGGER trg_quebrar_constraint_deletar_filme_diretor_delete
+BEFORE DELETE on tbl_filme
+FOR EACH ROW
+BEGIN
+    DELETE FROM tbl_filme_diretor WHERE filme_id = OLD.filme_id;
+END $$
+DELIMITER ;
+
+DELIMITER $$
+CREATE TRIGGER trg_quebrar_constraint_deletar_filme_diretor_update
+BEFORE UPDATE on tbl_filme
+FOR EACH ROW
+BEGIN
+    DELETE FROM tbl_filme_diretor WHERE filme_id = OLD.filme_id;
+END $$
+DELIMITER ;
+
+-- Triggers para tbl_filme_estudio
+DELIMITER $$
+CREATE TRIGGER trg_quebrar_constraint_deletar_filme_estudio_delete
+BEFORE DELETE on tbl_filme
+FOR EACH ROW
+BEGIN
+    DELETE FROM tbl_filme_estudio WHERE filme_id = OLD.filme_id;
+END $$
+DELIMITER ;
+
+DELIMITER $$
+CREATE TRIGGER trg_quebrar_constraint_deletar_filme_estudio_update
+BEFORE UPDATE on tbl_filme
+FOR EACH ROW
+BEGIN
+    DELETE FROM tbl_filme_estudio WHERE filme_id = OLD.filme_id;
+END $$
+DELIMITER ;
+
+DELIMITER $$
+CREATE TRIGGER trg_quebrar_constraint_deletar_estudio_delete
+BEFORE DELETE on tbl_estudio
+FOR EACH ROW
+BEGIN
+    DELETE FROM tbl_filme_estudio WHERE estudio_id = OLD.estudio_id;
 END $$
 DELIMITER ;
 

@@ -1,0 +1,1053 @@
+openapi: 3.0.3
+info:
+  title: Projeto Locadora Roger Ribeiro - SENAI Jandira
+  description: |-
+    API destinada ao controle de filmes, atores, diretores, estúdios, personagens, faixas etárias e gêneros.
+    Desenvolvida como projeto do SENAI Jandira - junto ao Professor Marcel.
+  termsOfService: http://swagger.io/terms/
+  contact:
+    email: cjo.rogerribeiro@gmail.com
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: 1.0.0
+externalDocs:
+  description: Saiba mais sobre o Swagger
+  url: http://swagger.io
+servers:
+  - url: http://localhost:3030/v1/locadora
+
+tags:
+  - name: Filme
+  - name: Gênero
+  - name: Faixa Etária
+  - name: Ator
+  - name: Diretor
+  - name: Estúdio
+  - name: Personagem
+  - name: Filme Ator
+  - name: Filme Diretor
+  - name: Filme Estúdio
+
+paths:
+
+  /filmes:
+    get:
+      tags: [Filme]
+      summary: Lista todos os filmes com atores, diretores e estúdios
+      responses:
+        '200':
+          description: Lista de filmes retornada com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: true
+                  status_code:
+                    type: integer
+                    example: 200
+                  films_amount:
+                    type: integer
+                    example: 2
+                  films:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/FilmeCompleto'
+        '404':
+          description: Nenhum filme encontrado
+    post:
+      tags: [Filme]
+      summary: Adiciona um novo filme
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FilmeInput'
+      responses:
+        '201':
+          description: Filme criado com sucesso
+        '400':
+          description: Erro nos campos obrigatórios
+        '500':
+          description: Erro interno na camada de controle
+  /filme/{id}:
+    get:
+      tags: [Filme]
+      summary: Busca um filme pelo ID com atores, diretores e estúdios
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Filme encontrado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: true
+                  status_code:
+                    type: integer
+                    example: 200
+                  film:
+                    $ref: '#/components/schemas/FilmeCompleto'
+        '404':
+          description: Filme não encontrado
+    put:
+      tags: [Filme]
+      summary: Atualiza um filme existente
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FilmeInput'
+      responses:
+        '200':
+          description: Filme atualizado com sucesso
+        '400':
+          description: Erro nos dados enviados
+    delete:
+      tags: [Filme]
+      summary: Exclui um filme e seus relacionamentos
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Filme excluído com sucesso
+        '404':
+          description: Filme não encontrado
+
+  # Relacionamentos Filme-Atores
+  /filmes-atores:
+    get:
+      tags: [Filme Ator]
+      summary: Lista todos os relacionamentos filme-ator
+      responses:
+        '200':
+          description: Lista retornada com sucesso
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/FilmeAtor'
+  /filme-ator/{id}:
+    get:
+      tags: [Filme Ator]
+      summary: Busca relacionamento filme-ator por ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Relacionamento encontrado
+    put:
+      tags: [Filme Ator]
+      summary: Atualiza relacionamento filme-ator
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FilmeAtorInput'
+      responses:
+        '200':
+          description: Atualizado com sucesso
+    delete:
+      tags: [Filme Ator]
+      summary: Remove ator do filme
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Removido com sucesso
+  /filme/{filmeId}/atores:
+    get:
+      tags: [Filme Ator]
+      summary: Lista todos os atores de um filme
+      parameters:
+        - in: path
+          name: filmeId
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Lista de atores retornada
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AtorComPapel'
+  /ator/{atorId}/filmes:
+    get:
+      tags: [Filme Ator]
+      summary: Lista todos os filmes de um ator
+      parameters:
+        - in: path
+          name: atorId
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Lista de filmes retornada
+  /filme-ator:
+    post:
+      tags: [Filme Ator]
+      summary: Adiciona ator a um filme
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FilmeAtorInput'
+      responses:
+        '201':
+          description: Relacionamento criado com sucesso
+
+  # Relacionamentos Filme-Diretores
+  /filmes-diretores:
+    get:
+      tags: [Filme Diretor]
+      summary: Lista todos os relacionamentos filme-diretor
+      responses:
+        '200':
+          description: Lista retornada com sucesso
+  /filme-diretor/{id}:
+    get:
+      tags: [Filme Diretor]
+      summary: Busca relacionamento filme-diretor por ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Relacionamento encontrado
+    put:
+      tags: [Filme Diretor]
+      summary: Atualiza relacionamento filme-diretor
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FilmeDiretorInput'
+      responses:
+        '200':
+          description: Atualizado com sucesso
+    delete:
+      tags: [Filme Diretor]
+      summary: Remove diretor do filme
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Removido com sucesso
+  /filme/{filmeId}/diretores:
+    get:
+      tags: [Filme Diretor]
+      summary: Lista todos os diretores de um filme
+      parameters:
+        - in: path
+          name: filmeId
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Lista de diretores retornada
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Diretor'
+  /diretor/{diretorId}/filmes:
+    get:
+      tags: [Filme Diretor]
+      summary: Lista todos os filmes de um diretor
+      parameters:
+        - in: path
+          name: diretorId
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Lista de filmes retornada
+  /filme-diretor:
+    post:
+      tags: [Filme Diretor]
+      summary: Adiciona diretor a um filme
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FilmeDiretorInput'
+      responses:
+        '201':
+          description: Relacionamento criado com sucesso
+
+  # Relacionamentos Filme-Estúdios
+  /filmes-estudios:
+    get:
+      tags: [Filme Estúdio]
+      summary: Lista todos os relacionamentos filme-estúdio
+      responses:
+        '200':
+          description: Lista retornada com sucesso
+  /filme-estudio/{id}:
+    get:
+      tags: [Filme Estúdio]
+      summary: Busca relacionamento filme-estúdio por ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Relacionamento encontrado
+    put:
+      tags: [Filme Estúdio]
+      summary: Atualiza relacionamento filme-estúdio
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FilmeEstudioInput'
+      responses:
+        '200':
+          description: Atualizado com sucesso
+    delete:
+      tags: [Filme Estúdio]
+      summary: Remove estúdio do filme
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Removido com sucesso
+  /filme/{filmeId}/estudios:
+    get:
+      tags: [Filme Estúdio]
+      summary: Lista todos os estúdios de um filme
+      parameters:
+        - in: path
+          name: filmeId
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Lista de estúdios retornada
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/EstudioComTipo'
+  /estudio/{estudioId}/filmes:
+    get:
+      tags: [Filme Estúdio]
+      summary: Lista todos os filmes de um estúdio
+      parameters:
+        - in: path
+          name: estudioId
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Lista de filmes retornada
+  /filme-estudio:
+    post:
+      tags: [Filme Estúdio]
+      summary: Adiciona estúdio a um filme
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FilmeEstudioInput'
+      responses:
+        '201':
+          description: Relacionamento criado com sucesso
+
+  # Endpoints existentes
+  /generos:
+    get:
+      tags: [Gênero]
+      summary: Lista todos os gêneros
+      responses:
+        '200':
+          description: Lista retornada com sucesso
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Genero'
+        '404':
+          description: Nenhum gênero encontrado
+  /genero:
+    post:
+      tags: [Gênero]
+      summary: Adiciona um novo gênero
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Genero'
+      responses:
+        '201':
+          description: Gênero criado com sucesso
+        '400':
+          description: Erro nos campos obrigatórios
+  /genero/{id}:
+    get:
+      tags: [Gênero]
+      summary: Busca um gênero pelo ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Gênero encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Genero'
+        '404':
+          description: Gênero não encontrado
+    put:
+      tags: [Gênero]
+      summary: Atualiza um gênero existente
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Genero'
+      responses:
+        '200':
+          description: Gênero atualizado com sucesso
+    delete:
+      tags: [Gênero]
+      summary: Exclui um gênero
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Gênero excluído
+
+  /faixas-etarias:
+    get:
+      tags: [Faixa Etária]
+      summary: Lista todas as faixas etárias
+      responses:
+        '200':
+          description: Lista retornada com sucesso
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/FaixaEtaria'
+  /faixas-etaria:
+    post:
+      tags: [Faixa Etária]
+      summary: Adiciona uma nova faixa etária
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FaixaEtaria'
+      responses:
+        '201':
+          description: Criada com sucesso
+  /faixas-etaria/{id}:
+    get:
+      tags: [Faixa Etária]
+      summary: Busca faixa etária pelo ID
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+      responses:
+        '200':
+          description: Faixa etária encontrada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FaixaEtaria'
+        '404':
+          description: Não encontrada
+    put:
+      tags: [Faixa Etária]
+      summary: Atualiza faixa etária existente
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FaixaEtaria'
+      responses:
+        '200':
+          description: Atualizada com sucesso
+    delete:
+      tags: [Faixa Etária]
+      summary: Exclui faixa etária
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+      responses:
+        '200':
+          description: Excluída com sucesso
+
+  /atores:
+    get:
+      tags: [Ator]
+      summary: Lista todos os atores
+      responses:
+        '200':
+          description: Lista retornada
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Ator'
+  /ator:
+    post:
+      tags: [Ator]
+      summary: Adiciona novo ator
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Ator'
+      responses:
+        '201':
+          description: Criado com sucesso
+  /ator/{id}:
+    get:
+      tags: [Ator]
+      summary: Busca ator por ID
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+      responses:
+        '200':
+          description: Ator encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Ator'
+    put:
+      tags: [Ator]
+      summary: Atualiza ator existente
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Ator'
+      responses:
+        '200':
+          description: Atualizado com sucesso
+    delete:
+      tags: [Ator]
+      summary: Exclui ator
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+      responses:
+        '200':
+          description: Excluído com sucesso
+
+  /diretores:
+    get:
+      tags: [Diretor]
+      summary: Lista todos os diretores
+      responses:
+        '200':
+          description: Lista retornada com sucesso
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Diretor'
+  /diretor:
+    post:
+      tags: [Diretor]
+      summary: Adiciona novo diretor
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Diretor'
+      responses:
+        '201':
+          description: Diretor criado com sucesso
+  /diretor/{id}:
+    get:
+      tags: [Diretor]
+      summary: Busca diretor por ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Diretor encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Diretor'
+    put:
+      tags: [Diretor]
+      summary: Atualiza diretor
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Diretor'
+      responses:
+        '200':
+          description: Diretor atualizado
+    delete:
+      tags: [Diretor]
+      summary: Exclui diretor
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Diretor excluído com sucesso
+
+  /estudios:
+    get:
+      tags: [Estúdio]
+      summary: Lista todos os estúdios
+      responses:
+        '200':
+          description: Lista retornada
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Estudio'
+  /estudio:
+    post:
+      tags: [Estúdio]
+      summary: Adiciona novo estúdio
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Estudio'
+      responses:
+        '201':
+          description: Criado com sucesso
+  /estudio/{id}:
+    get:
+      tags: [Estúdio]
+      summary: Busca estúdio por ID
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+      responses:
+        '200':
+          description: Estúdio encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Estudio'
+    put:
+      tags: [Estúdio]
+      summary: Atualiza estúdio existente
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Estudio'
+      responses:
+        '200':
+          description: Atualizado com sucesso
+    delete:
+      tags: [Estúdio]
+      summary: Exclui estúdio e seus relacionamentos com filmes
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Estúdio excluído
+
+  /personagens:
+    get:
+      tags: [Personagem]
+      summary: Lista todos os personagens
+      responses:
+        '200':
+          description: Lista retornada
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Personagem'
+  /personagem:
+    post:
+      tags: [Personagem]
+      summary: Adiciona novo personagem
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Personagem'
+      responses:
+        '201':
+          description: Criado com sucesso
+  /personagem/{id}:
+    get:
+      tags: [Personagem]
+      summary: Busca personagem por ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Personagem encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Personagem'
+    put:
+      tags: [Personagem]
+      summary: Atualiza personagem existente
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Personagem'
+      responses:
+        '200':
+          description: Atualizado com sucesso
+    delete:
+      tags: [Personagem]
+      summary: Exclui personagem
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Excluído com sucesso
+
+components:
+  schemas:
+    FilmeCompleto:
+      type: object
+      properties:
+        filme_id: { type: integer }
+        nome: { type: string }
+        sinopse: { type: string }
+        data_lancamento: { type: string, format: date }
+        duracao: { type: string }
+        orcamento: { type: number, format: float }
+        trailer: { type: string }
+        capa: { type: string }
+        genero:
+          type: array
+          items:
+            $ref: '#/components/schemas/Genero'
+        atores:
+          type: array
+          items:
+            $ref: '#/components/schemas/AtorComPapel'
+        diretores:
+          type: array
+          items:
+            $ref: '#/components/schemas/Diretor'
+        estudios:
+          type: array
+          items:
+            $ref: '#/components/schemas/EstudioComTipo'
+
+    FilmeInput:
+      type: object
+      required: [nome, duracao, orcamento, capa]
+      properties:
+        nome: { type: string, maxLength: 100 }
+        sinopse: { type: string }
+        data_lancamento: { type: string, format: date }
+        duracao: { type: string }
+        orcamento: { type: number, format: float }
+        trailer: { type: string, maxLength: 200 }
+        capa: { type: string, maxLength: 200 }
+        genero:
+          type: array
+          items:
+            type: object
+            properties:
+              id: { type: integer }
+
+
+    Genero:
+      type: object
+      required: [nome]
+      properties:
+        genero_id: { type: integer }
+        nome: { type: string, maxLength: 35 }
+
+    FaixaEtaria:
+      type: object
+      required: [nome, classificacao_indicativa]
+      properties:
+        faixa_etaria_id: { type: integer }
+        nome: { type: string, maxLength: 50 }
+        classificacao_indicativa: { type: string, maxLength: 150 }
+        caracteristicas: { type: string, maxLength: 255 }
+
+    Ator:
+      type: object
+      required: [nome, data_nascimento]
+      properties:
+        ator_id: { type: integer }
+        nome: { type: string, maxLength: 150 }
+        data_nascimento: { type: string, format: date }
+        altura: { type: number, format: float }
+        peso: { type: number, format: float }
+
+    AtorComPapel:
+      type: object
+      properties:
+        ator_id: { type: integer }
+        nome: { type: string, maxLength: 150 }
+        data_nascimento: { type: string, format: date }
+        altura: { type: number, format: float }
+        peso: { type: number, format: float }
+        papel: { type: string, maxLength: 100 }
+
+    Diretor:
+      type: object
+      required: [nome, data_nascimento]
+      properties:
+        diretor_id: { type: integer }
+        nome: { type: string, maxLength: 120 }
+        data_nascimento: { type: string, format: date }
+        altura: { type: number, format: float }
+        peso: { type: number, format: float }
+
+    Estudio:
+      type: object
+      required: [nome, cnpj, logradouro, bairro, cidade, complemento]
+      properties:
+        estudio_id: { type: integer }
+        nome: { type: string, maxLength: 120 }
+        cnpj: { type: string, maxLength: 14 }
+        logradouro: { type: string, maxLength: 120 }
+        bairro: { type: string, maxLength: 50 }
+        cidade: { type: string, maxLength: 20 }
+        complemento: { type: string, maxLength: 20 }
+
+    EstudioComTipo:
+      type: object
+      properties:
+        estudio_id: { type: integer }
+        nome: { type: string, maxLength: 120 }
+        cnpj: { type: string, maxLength: 14 }
+        logradouro: { type: string, maxLength: 120 }
+        bairro: { type: string, maxLength: 50 }
+        cidade: { type: string, maxLength: 20 }
+        complemento: { type: string, maxLength: 20 }
+        tipo_producao: { type: string, enum: [Principal, 'Co-produção', Distribuição] }
+
+    Personagem:
+      type: object
+      required: [nome, data_nascimento, altura, peso, descricao, personalidade, habilidades]
+      properties:
+        personagem_id: { type: integer }
+        nome: { type: string, maxLength: 150 }
+        data_nascimento: { type: string, format: date }
+        altura: { type: number, format: float }
+        peso: { type: number, format: float }
+        descricao: { type: string, maxLength: 255 }
+        personalidade: { type: string, maxLength: 150 }
+        habilidades: { type: string, maxLength: 150 }
+
+    # Schemas para relacionamentos
+    FilmeAtor:
+      type: object
+      properties:
+        filme_ator_id: { type: integer }
+        filme_id: { type: integer }
+        ator_id: { type: integer }
+        papel: { type: string, maxLength: 100 }
+
+    FilmeAtorInput:
+      type: object
+      required: [filme_id, ator_id, papel]
+      properties:
+        filme_id: { type: integer }
+        ator_id: { type: integer }
+        papel: { type: string, maxLength: 100 }
+
+
+    FilmeDiretorInput:
+      type: object
+      required: [filme_id, diretor_id]
+      properties:
+        filme_id: { type: integer }
+        diretor_id: { type: integer }
+
+    FilmeEstudioInput:
+      type: object
+      required: [filme_id, estudio_id, tipo_producao]
+      properties:
+        filme_id: { type: integer }
+        estudio_id: { type: integer }
+        tipo_producao: { type: string, enum: [Principal, 'Co-produção', Distribuição] }

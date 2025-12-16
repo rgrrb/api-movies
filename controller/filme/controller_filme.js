@@ -12,6 +12,9 @@
 //Import do arquivo DAO para manipular o crud no banco de dados
 const filmeDAO = require('../../model/dao/filme.js')
 const controllerFilmeGenero = require('./controller_filme_genero.js')
+const controllerFilmActor = require('./controller_filme_ator.js')
+const controllerFilmDirector = require('./controller_filme_diretor.js')
+const controllerFilmStudio = require('./controller_filme_estudio.js')
 const controllerAgeGroup = require('../faixa_etaria/controller_faixa_etaria.js')
 //Import od arquivo que padroniza todas as mensagens
 const MESSAGE_DEFAULT = require('../module/config_messages.js')
@@ -30,17 +33,43 @@ const listarFilmes = async () => {
         if (result) {
             if (result.length > 0) {
 
-                //Processamento para adicionar os generos em cada filme
+                //Processamento para adicionar os generos, atores e diretores em cada filme
                 for (filme of result) {
+                    // Adicionar gêneros
                     let filmGenres = await controllerFilmeGenero.listGenreIdFilm(filme.filme_id)
 
                     if (filmGenres.status_code == 200) {
                         filme.genero = filmGenres.response.film_genre
-
                     } else {
                         filme.genero = MESSAGE.ERROR_NOT_FOUND.message
                     }
 
+                    // Adicionar atores
+                    let filmActors = await controllerFilmActor.listActorsByIdFilm(filme.filme_id)
+
+                    if (filmActors.status_code == 200) {
+                        filme.atores = filmActors.response.film_actors
+                    } else {
+                        filme.atores = MESSAGE.ERROR_NOT_FOUND.message
+                    }
+
+                    // Adicionar diretores
+                    let filmDirectors = await controllerFilmDirector.listDirectorsByIdFilm(filme.filme_id)
+
+                    if (filmDirectors.status_code == 200) {
+                        filme.diretores = filmDirectors.response.film_directors
+                    } else {
+                        filme.diretores = MESSAGE.ERROR_NOT_FOUND.message
+                    }
+
+                    // Adicionar estúdios
+                    let filmStudios = await controllerFilmStudio.listStudiosByIdFilm(filme.filme_id)
+
+                    if (filmStudios.status_code == 200) {
+                        filme.estudios = filmStudios.response.film_studios
+                    } else {
+                        filme.estudios = MESSAGE.ERROR_NOT_FOUND.message
+                    }
                 }
 
                 let filmsAmount = result.length
@@ -77,15 +106,41 @@ const buscarFilmePorId = async (id) => {
                 if (result.length > 0) {
 
                     for (filme of result) {
+                        // Adicionar gêneros
                         let filmGenres = await controllerFilmeGenero.listGenreIdFilm(filme.filme_id)
 
                         if (filmGenres.status_code == 200) {
                             filme.genero = filmGenres.response.film_genre
-
                         } else {
                             filme.genero = MESSAGE.ERROR_NOT_FOUND.message
                         }
 
+                        // Adicionar atores
+                        let filmActors = await controllerFilmActor.listActorsByIdFilm(filme.filme_id)
+
+                        if (filmActors.status_code == 200) {
+                            filme.atores = filmActors.response.film_actors
+                        } else {
+                            filme.atores = MESSAGE.ERROR_NOT_FOUND.message
+                        }
+
+                        // Adicionar diretores
+                        let filmDirectors = await controllerFilmDirector.listDirectorsByIdFilm(filme.filme_id)
+
+                        if (filmDirectors.status_code == 200) {
+                            filme.diretores = filmDirectors.response.film_directors
+                        } else {
+                            filme.diretores = MESSAGE.ERROR_NOT_FOUND.message
+                        }
+
+                        // Adicionar estúdios
+                        let filmStudios = await controllerFilmStudio.listStudiosByIdFilm(filme.filme_id)
+
+                        if (filmStudios.status_code == 200) {
+                            filme.estudios = filmStudios.response.film_studios
+                        } else {
+                            filme.estudios = MESSAGE.ERROR_NOT_FOUND.message
+                        }
                     }
 
                     

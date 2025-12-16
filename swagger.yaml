@@ -934,6 +934,26 @@ components:
             type: object
             properties:
               id: { type: integer }
+        atores:
+          type: array
+          items:
+            type: object
+            properties:
+              ator_id: { type: integer }
+              papel: { type: string, maxLength: 100 }
+        diretores:
+          type: array
+          items:
+            type: object
+            properties:
+              diretor_id: { type: integer }
+        estudios:
+          type: array
+          items:
+            type: object
+            properties:
+              estudio_id: { type: integer }
+              tipo_producao: { type: string, enum: [Principal, 'Co-produção', Distribuição] }
 
 
     Genero:

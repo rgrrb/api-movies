@@ -15,7 +15,6 @@ const controllerFilmeGenero = require('./controller_filme_genero.js')
 const controllerFilmActor = require('./controller_filme_ator.js')
 const controllerFilmDirector = require('./controller_filme_diretor.js')
 const controllerFilmStudio = require('./controller_filme_estudio.js')
-const controllerAgeGroup = require('../faixa_etaria/controller_faixa_etaria.js')
 //Import od arquivo que padroniza todas as mensagens
 const MESSAGE_DEFAULT = require('../module/config_messages.js')
 
@@ -211,14 +210,54 @@ const inserirFilme = async (filme, contentType) => {
                             }
                         }
 
-                        let ageGroup = await controllerAgeGroup.searchAgeRatingById(filme.faixa_etaria)
+                        // Inserir atores se existirem
+                        if (filme.atores && filme.atores.length > 0) {
+                            for (ator of filme.atores) {
+                                let filmeAtor = {
+                                    filme_id: lastIdFilme,
+                                    ator_id: ator.ator_id,
+                                    papel: ator.papel
+                                }
 
-                        if (ageGroup.status_code == 200) {
-                            let faixa_etaria = ageGroup.response.age_group[0]
-                            filme.faixa_etaria = [faixa_etaria]
+                                let resultFilmeAtor = await controllerFilmActor.insertFilmActor(filmeAtor, contentType)
 
-                        } else {   
-                            MESSAGE.HEADER.response.filme.faixa_etaria = MESSAGE.ERROR_NOT_FOUND.message
+                                if (resultFilmeAtor.status_code != 201) {
+                                    return MESSAGE.ERROR_RELATION_TABLE
+                                }
+                            }
+                        }
+
+                        // Inserir diretores se existirem
+                        if (filme.diretores && filme.diretores.length > 0) {
+                            for (diretor of filme.diretores) {
+                                let filmeDiretor = {
+                                    filme_id: lastIdFilme,
+                                    diretor_id: diretor.diretor_id
+                                }
+
+                                let resultFilmeDiretor = await controllerFilmDirector.insertFilmDirector(filmeDiretor, contentType)
+
+                                if (resultFilmeDiretor.status_code != 201) {
+                                    return MESSAGE.ERROR_RELATION_TABLE
+                                }
+                            }
+                        }
+
+                        // Inserir estúdios se existirem
+                        if (filme.estudios && filme.estudios.length > 0) {
+                            for (estudio of filme.estudios) {
+                                let filmeEstudio = {
+                                    filme_id: lastIdFilme,
+                                    estudio_id: estudio.estudio_id,
+                                    tipo_producao: estudio.tipo_producao || 'Principal'
+                                }
+
+                                let resultFilmeEstudio = await controllerFilmStudio.insertFilmStudio(filmeEstudio, contentType)
+
+                                if (resultFilmeEstudio.status_code != 201) {
+                                    return MESSAGE.ERROR_RELATION_TABLE
+                                }
+                            }
                         }
 
 
@@ -295,6 +334,56 @@ const atualizarFilme = async (filme, id, contentType) => {
                                 return MESSAGE.ERROR_RELATION_TABLE
                             }
 
+                        }
+
+                        // Inserir atores se existirem
+                        if (filme.atores && filme.atores.length > 0) {
+                            for (ator of filme.atores) {
+                                let filmeAtor = {
+                                    filme_id: filme.id,
+                                    ator_id: ator.ator_id,
+                                    papel: ator.papel
+                                }
+
+                                let resultFilmeAtor = await controllerFilmActor.insertFilmActor(filmeAtor, contentType)
+
+                                if (resultFilmeAtor.status_code != 201) {
+                                    return MESSAGE.ERROR_RELATION_TABLE
+                                }
+                            }
+                        }
+
+                        // Inserir diretores se existirem
+                        if (filme.diretores && filme.diretores.length > 0) {
+                            for (diretor of filme.diretores) {
+                                let filmeDiretor = {
+                                    filme_id: filme.id,
+                                    diretor_id: diretor.diretor_id
+                                }
+
+                                let resultFilmeDiretor = await controllerFilmDirector.insertFilmDirector(filmeDiretor, contentType)
+
+                                if (resultFilmeDiretor.status_code != 201) {
+                                    return MESSAGE.ERROR_RELATION_TABLE
+                                }
+                            }
+                        }
+
+                        // Inserir estúdios se existirem
+                        if (filme.estudios && filme.estudios.length > 0) {
+                            for (estudio of filme.estudios) {
+                                let filmeEstudio = {
+                                    filme_id: filme.id,
+                                    estudio_id: estudio.estudio_id,
+                                    tipo_producao: estudio.tipo_producao || 'Principal'
+                                }
+
+                                let resultFilmeEstudio = await controllerFilmStudio.insertFilmStudio(filmeEstudio, contentType)
+
+                                if (resultFilmeEstudio.status_code != 201) {
+                                    return MESSAGE.ERROR_RELATION_TABLE
+                                }
+                            }
                         }
 
                         MESSAGE.HEADER.status = MESSAGE.SUCESS_UPDATED_ITEM.status
@@ -380,7 +469,7 @@ const validarDadosFilme = (filme) => {
         MESSAGE.ERROR_REQUIRED_FIELDS.invalid_field = "Atributo [DURACAO] inválido"
         return MESSAGE.ERROR_REQUIRED_FIELDS //400
 
-    } else if (filme.orcamento == '' || filme.orcamento == null || filme.orcamento == undefined || typeof (filme.orcamento) == 'Number') {
+    } else if (filme.orcamento == '' || filme.orcamento == null || filme.orcamento == undefined || typeof (filme.orcamento) != 'number') {
         MESSAGE.ERROR_REQUIRED_FIELDS.invalid_field = "Atributo [ORCAMENTO] inválido"
         return MESSAGE.ERROR_REQUIRED_FIELDS //400
 
